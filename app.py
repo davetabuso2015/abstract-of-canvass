@@ -2225,9 +2225,28 @@ def generate_pdf_from_docx_bytes(docx_bytes: bytes) -> bytes:
         soffice_bin = shutil.which("libreoffice") or shutil.which("soffice")
         if soffice_bin:
             try:
-                cmd = [soffice_bin, "--headless", "--convert-to", "pdf", "--outdir", tmp_dir, os.path.abspath(tmp_docx)]
-                subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=35)
-                for _ in range(15):
+                env = os.environ.copy()
+                env["HOME"] = tmp_dir
+                profile_dir = os.path.join(tmp_dir, "lo_profile")
+                os.makedirs(profile_dir, exist_ok=True)
+                profile_uri = "file:///" + profile_dir.replace("\\", "/").lstrip("/")
+                cmd = [
+                    soffice_bin,
+                    "--headless",
+                    "--invisible",
+                    "--nologo",
+                    "--nodefault",
+                    "--nofirststartwizard",
+                    "--norestore",
+                    f"-env:UserInstallation={profile_uri}",
+                    "--convert-to", "pdf",
+                    "--outdir", tmp_dir,
+                    os.path.abspath(tmp_docx)
+                ]
+                proc = subprocess.run(cmd, env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=40)
+                if proc.returncode != 0:
+                    print("LibreOffice error:", proc.stderr.decode("utf-8", errors="ignore"))
+                for _ in range(25):
                     if os.path.exists(tmp_pdf) and os.path.getsize(tmp_pdf) > 0:
                         break
                     time.sleep(0.1)
@@ -2302,103 +2321,76 @@ def build_html_document_fallback(ctx: dict, logo_b64: str) -> str:
     winner_loc = ctx.get("winning_bidder_location", b1_loc)
     logo_tag = f'<img src="data:image/png;base64,{logo_b64}" style="width: 72px; height: 72px; object-fit: contain; margin-bottom: 4px;" alt="Seal" />' if logo_b64 else ''
     
-    return f"""
-    <div class="doc-paper-fallback" style="background: #ffffff; color: #000000; font-family: 'Times New Roman', Times, serif; padding: 40px 48px; box-sizing: border-box; width: 100%; max-width: 800px; margin: 0 auto; line-height: 1.35; box-shadow: 0 4px 20px rgba(0,0,0,0.5); border-radius: 2px;">
-        <div style="text-align: center; margin-bottom: 14px;">
-            {logo_tag}
-            <div style="font-size: 13px;">Republic of the Philippines</div>
-            <div style="font-size: 13px;">Province of Cavite</div>
-            <div style="font-size: 14px; font-weight: bold; letter-spacing: 0.5px;">MUNICIPALITY OF MARAGONDON</div>
-            <div style="font-size: 17px; font-weight: bold; margin-top: 14px; text-decoration: underline; letter-spacing: 1px;">ABSTRACT OF CANVASS</div>
-        </div>
-        
-        <div style="font-size: 13px; margin-bottom: 12px; font-weight: bold;">
-            FOR: PAYMENT FOR THE {ctx.get('purpose', '')}
-        </div>
-        
-        <div style="text-align: right; font-size: 12.5px; margin-bottom: 16px; line-height: 1.4;">
-            <div>Opened at the Office of the Municipal</div>
-            <div>Mayor on <u>{ctx.get('opened_date', '')}</u></div>
-        </div>
-        
-        <table style="width: 100%; border-collapse: collapse; border: 1.5px solid #000000; margin-bottom: 18px; font-size: 12.5px;">
-            <thead>
-                <tr style="background: #f8fafc; font-weight: bold; text-align: center;">
-                    <th style="border: 1px solid #000000; padding: 8px 10px; width: 62%;">NAME OF BIDDERS</th>
-                    <th style="border: 1px solid #000000; padding: 8px 10px; width: 38%;">AMOUNT OF BID</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td style="border: 1px solid #000000; padding: 8px 10px; vertical-align: top;">
-                        <strong>1. {b1_name}</strong><br>
-                        <span style="font-size: 11.5px; padding-left: 14px; color: #222;">{b1_loc}</span>
-                    </td>
-                    <td style="border: 1px solid #000000; padding: 8px 10px; text-align: right; vertical-align: top; font-weight: bold;">
-                        {b1_amt}
-                    </td>
-                </tr>
-                <tr>
-                    <td style="border: 1px solid #000000; padding: 8px 10px; vertical-align: top;">
-                        <strong>2. {b2_name}</strong><br>
-                        <span style="font-size: 11.5px; padding-left: 14px; color: #222;">{b2_loc}</span>
-                    </td>
-                    <td style="border: 1px solid #000000; padding: 8px 10px; text-align: right; vertical-align: top; font-weight: bold;">
-                        {b2_amt}
-                    </td>
-                </tr>
-                <tr>
-                    <td style="border: 1px solid #000000; padding: 8px 10px; vertical-align: top;">
-                        <strong>3. {b3_name}</strong><br>
-                        <span style="font-size: 11.5px; padding-left: 14px; color: #222;">{b3_loc}</span>
-                    </td>
-                    <td style="border: 1px solid #000000; padding: 8px 10px; text-align: right; vertical-align: top; font-weight: bold;">
-                        {b3_amt}
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        
-        <div style="font-size: 12.5px; margin-bottom: 22px; text-align: justify; line-height: 1.45;">
-            Awarded to the lowest bidder <strong>{winner_name}</strong>, <strong>{winner_loc}</strong> same being reasonable and most advantageous to the government.
-        </div>
-        
-        <div style="margin-top: 14px; margin-bottom: 24px;">
-            <div style="text-align: center; font-size: 12px; font-weight: bold; margin-bottom: 18px; letter-spacing: 0.5px;">COMMITTEE ON AWARDS</div>
-            
-            <div style="display: flex; justify-content: space-around; text-align: center; font-size: 11px; margin-bottom: 16px;">
-                <div>
-                    <div style="font-weight: bold; border-bottom: 1px solid #000; padding-bottom: 2px;">ENGR. ALDWIN JESTER A. ANCAYAN</div>
-                    <div style="font-size: 10px; color: #333;">BAC CHAIRMAN/MUN. ENGINEER</div>
-                </div>
-                <div>
-                    <div style="font-weight: bold; border-bottom: 1px solid #000; padding-bottom: 2px;">CHERRYL I. ESQUILLO</div>
-                    <div style="font-size: 10px; color: #333;">BAC VICE-CHAIRMAN/MUN. BUDGET OFFICER</div>
-                </div>
-            </div>
-            
-            <div style="display: flex; justify-content: space-around; text-align: center; font-size: 11px; margin-bottom: 16px;">
-                <div>
-                    <div style="font-weight: bold; border-bottom: 1px solid #000; padding-bottom: 2px;">REGINO S. REYES</div>
-                    <div style="font-size: 10px; color: #333;">BAC MEMBER/MUN. AGRICULTURIST</div>
-                </div>
-                <div>
-                    <div style="font-weight: bold; border-bottom: 1px solid #000; padding-bottom: 2px;">GERARDO Z. RIELO JR.</div>
-                    <div style="font-size: 10px; color: #333;">BAC MEMBER/MDRRMO</div>
-                </div>
-            </div>
-            
-            <div style="text-align: center; font-size: 11px;">
-                <div style="font-weight: bold; border-bottom: 1px solid #000; display: inline-block; padding-bottom: 2px;">ENGR. ENP. PERCIVAL M. MALIMBAN</div>
-                <div style="font-size: 10px; color: #333;">BAC MEMBER/MUN. PLANNING & DEV’T COORDINATOR</div>
-            </div>
-        </div>
-        
-        <div style="font-size: 12px; font-weight: bold; color: #1e293b; border-top: 1px dashed #cbd5e1; padding-top: 8px;">
-            {ctx.get('ac_number', '')}
-        </div>
-    </div>
-    """
+    html = f"""<div class="doc-paper-fallback" style="background:#ffffff;color:#000000;font-family:'Times New Roman',Times,serif;padding:36px 42px;box-sizing:border-box;width:100%;max-width:820px;margin:0 auto;line-height:1.35;box-shadow:0 4px 20px rgba(0,0,0,0.5);border-radius:2px;">
+<div style="text-align:center;margin-bottom:14px;">
+{logo_tag}
+<div style="font-size:13px;">Republic of the Philippines</div>
+<div style="font-size:13px;">Province of Cavite</div>
+<div style="font-size:14px;font-weight:bold;letter-spacing:0.5px;">MUNICIPALITY OF MARAGONDON</div>
+<div style="font-size:17px;font-weight:bold;margin-top:14px;text-decoration:underline;letter-spacing:1px;">ABSTRACT OF CANVASS</div>
+</div>
+<div style="font-size:13px;margin-bottom:12px;font-weight:bold;">FOR: PAYMENT FOR THE {ctx.get('purpose', '')}</div>
+<div style="text-align:right;font-size:12.5px;margin-bottom:16px;line-height:1.4;">
+<div>Opened at the Office of the Municipal</div>
+<div>Mayor on <u>{ctx.get('opened_date', '')}</u></div>
+</div>
+<table style="width:100%;border-collapse:collapse;border:1.5px solid #000000;margin-bottom:18px;font-size:12.5px;">
+<thead>
+<tr style="background:#f8fafc;font-weight:bold;text-align:center;">
+<th style="border:1px solid #000000;padding:8px 10px;width:62%;">NAME OF BIDDERS</th>
+<th style="border:1px solid #000000;padding:8px 10px;width:38%;">AMOUNT OF BID</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="border:1px solid #000000;padding:8px 10px;vertical-align:top;"><strong>1. {b1_name}</strong><br><span style="font-size:11.5px;padding-left:14px;color:#222;">{b1_loc}</span></td>
+<td style="border:1px solid #000000;padding:8px 10px;text-align:right;vertical-align:top;font-weight:bold;">{b1_amt}</td>
+</tr>
+<tr>
+<td style="border:1px solid #000000;padding:8px 10px;vertical-align:top;"><strong>2. {b2_name}</strong><br><span style="font-size:11.5px;padding-left:14px;color:#222;">{b2_loc}</span></td>
+<td style="border:1px solid #000000;padding:8px 10px;text-align:right;vertical-align:top;font-weight:bold;">{b2_amt}</td>
+</tr>
+<tr>
+<td style="border:1px solid #000000;padding:8px 10px;vertical-align:top;"><strong>3. {b3_name}</strong><br><span style="font-size:11.5px;padding-left:14px;color:#222;">{b3_loc}</span></td>
+<td style="border:1px solid #000000;padding:8px 10px;text-align:right;vertical-align:top;font-weight:bold;">{b3_amt}</td>
+</tr>
+</tbody>
+</table>
+<div style="font-size:12.5px;margin-bottom:22px;text-align:justify;line-height:1.45;">
+Awarded to the lowest bidder <strong>{winner_name}</strong>, <strong>{winner_loc}</strong> same being reasonable and most advantageous to the government.
+</div>
+<div style="margin-top:14px;margin-bottom:24px;">
+<div style="text-align:center;font-size:12px;font-weight:bold;margin-bottom:18px;letter-spacing:0.5px;">COMMITTEE ON AWARDS</div>
+<div style="display:flex;justify-content:space-around;text-align:center;font-size:11px;margin-bottom:16px;">
+<div>
+<div style="font-weight:bold;border-bottom:1px solid #000;padding-bottom:2px;">ENGR. ALDWIN JESTER A. ANCAYAN</div>
+<div style="font-size:10px;color:#333;">BAC CHAIRMAN/MUN. ENGINEER</div>
+</div>
+<div>
+<div style="font-weight:bold;border-bottom:1px solid #000;padding-bottom:2px;">CHERRYL I. ESQUILLO</div>
+<div style="font-size:10px;color:#333;">BAC VICE-CHAIRMAN/MUN. BUDGET OFFICER</div>
+</div>
+</div>
+<div style="display:flex;justify-content:space-around;text-align:center;font-size:11px;margin-bottom:16px;">
+<div>
+<div style="font-weight:bold;border-bottom:1px solid #000;padding-bottom:2px;">REGINO S. REYES</div>
+<div style="font-size:10px;color:#333;">BAC MEMBER/MUN. AGRICULTURIST</div>
+</div>
+<div>
+<div style="font-weight:bold;border-bottom:1px solid #000;padding-bottom:2px;">GERARDO Z. RIELO JR.</div>
+<div style="font-size:10px;color:#333;">BAC MEMBER/MDRRMO</div>
+</div>
+</div>
+<div style="text-align:center;font-size:11px;">
+<div style="font-weight:bold;border-bottom:1px solid #000;display:inline-block;padding-bottom:2px;">ENGR. ENP. PERCIVAL M. MALIMBAN</div>
+<div style="font-size:10px;color:#333;">BAC MEMBER/MUN. PLANNING &amp; DEV’T COORDINATOR</div>
+</div>
+</div>
+<div style="font-size:12px;font-weight:bold;color:#1e293b;border-top:1px dashed #cbd5e1;padding-top:8px;">
+{ctx.get('ac_number', '')}
+</div>
+</div>"""
+    return "".join(l.strip() for l in html.splitlines() if l.strip())
 
 def render_pdf_to_preview_png(pdf_bytes: bytes) -> bytes:
     """Render the first page of PDF bytes to a crisp, high-DPI PNG image."""
@@ -3721,276 +3713,242 @@ if st.session_state.generated_doc_bytes is not None:
     st.markdown("<div style='height: 12px;'></div>", unsafe_allow_html=True)
 
     # In-page 1:1 paper document view
-    st.markdown(f"""
-    <div style="display: flex; justify-content: center; align-items: flex-start; width: 100%; padding: 10px 0 30px 0;">
-        <div style="width: 100%; max-width: 820px; background: #ffffff; border-radius: 4px; box-shadow: 0 14px 44px rgba(0, 0, 0, 0.7), 0 2px 10px rgba(0, 0, 0, 0.45); overflow: hidden; border: 1px solid rgba(148, 163, 184, 0.35);">
-            {paper_card_inner}
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+    in_page_preview = f"""<div style="display: flex; justify-content: center; align-items: flex-start; width: 100%; padding: 10px 0 30px 0;">
+<div style="width: 100%; max-width: 820px; background: #ffffff; border-radius: 4px; box-shadow: 0 14px 44px rgba(0, 0, 0, 0.7), 0 2px 10px rgba(0, 0, 0, 0.45); overflow: hidden; border: 1px solid rgba(148, 163, 184, 0.35);">
+{paper_card_inner}
+</div>
+</div>"""
+    st.markdown(in_page_preview, unsafe_allow_html=True)
 
     # Companion script to manage overlay dialog, print, and generate-another prompts
     components.html(f"""
     <script>
     (function() {{
-        function setupOverlayHandlers() {{
-            try {{
-                const pDoc = window.parent.document;
-                const pWin = window.parent;
-                if (!pDoc) return;
-                
-                const overlay = pDoc.getElementById('preview-modal-overlay');
-                const modal = pDoc.getElementById('another-prompt-modal');
-                const btnClose = pDoc.getElementById('overlay-close-btn');
-                const btnPrint = pDoc.getElementById('overlay-print-btn');
-                const btnDl = pDoc.getElementById('overlay-dl-btn');
-                const btnReopen = pDoc.getElementById('btn-reopen-preview');
-                const btnConfirm = pDoc.getElementById('prompt-btn-confirm');
-                const btnCancel = pDoc.getElementById('prompt-btn-cancel');
+        try {{
+            const pDoc = window.parent.document;
+            const pWin = window.parent;
+            if (!pDoc) return;
 
-                function showPrompt() {{
-                    if (modal) modal.classList.add('is-open');
-                    if (overlay) overlay.classList.add('prompt-active');
+            // Direct print helper attached to parent window
+            pWin.runDirectPrint = function() {{
+                try {{
+                    let printFrame = pDoc.getElementById('app-direct-print-frame');
+                    if (printFrame) printFrame.remove();
+                    printFrame = pDoc.createElement('iframe');
+                    printFrame.id = 'app-direct-print-frame';
+                    printFrame.style.position = 'fixed';
+                    printFrame.style.top = '-10000px';
+                    printFrame.style.left = '-10000px';
+                    printFrame.style.width = '1000px';
+                    printFrame.style.height = '1400px';
+                    printFrame.style.border = '0';
+                    printFrame.style.visibility = 'hidden';
+                    pDoc.body.appendChild(printFrame);
+
+                    const frameDoc = printFrame.contentWindow.document;
+                    frameDoc.open();
+                    frameDoc.write(`
+                        <!DOCTYPE html>
+                        <html>
+                        <head>
+                            <title>Abstract of Canvass</title>
+                            <style>
+                                @page {{ size: auto; margin: 0mm; }}
+                                @media print {{
+                                    html, body {{ margin: 0 !important; padding: 0 !important; background: #ffffff !important; }}
+                                    img {{ width: 100% !important; max-width: 100% !important; height: auto !important; display: block !important; page-break-inside: avoid !important; }}
+                                }}
+                                html, body {{ margin: 0; padding: 0; background: #ffffff; }}
+                                img {{ width: 100%; height: auto; display: block; }}
+                            </style>
+                        </head>
+                        <body>
+                            <div id="print-body-content"></div>
+                        </body>
+                        </html>
+                    `);
+                    frameDoc.close();
+
+                    const printBodyContainer = frameDoc.getElementById('print-body-content');
+                    const hasPng = "{png_b64}".length > 10;
+                    if (hasPng) {{
+                        printBodyContainer.innerHTML = '<img id="print-image" src="data:image/png;base64,{png_b64}" />';
+                    }} else {{
+                        const paperElem = pDoc.getElementById('paper-card-root');
+                        printBodyContainer.innerHTML = paperElem ? paperElem.innerHTML : '';
+                    }}
+
+                    const pImg = frameDoc.getElementById('print-image');
+                    function doPrint() {{
+                        try {{
+                            printFrame.contentWindow.focus();
+                            printFrame.contentWindow.print();
+                        }} catch(e) {{
+                            console.error('Print trigger error:', e);
+                        }}
+                        function showPromptOnParent() {{
+                            const m = pDoc.getElementById('another-prompt-modal');
+                            const ov = pDoc.getElementById('preview-modal-overlay');
+                            if (m) m.classList.add('is-open');
+                            if (ov) ov.classList.add('prompt-active');
+                            try {{
+                                pDoc.body.classList.add('prompt-active');
+                                pDoc.documentElement.classList.add('prompt-active');
+                            }} catch(e) {{}}
+                        }}
+                        try {{
+                            printFrame.contentWindow.addEventListener('afterprint', function() {{
+                                setTimeout(showPromptOnParent, 600);
+                            }}, {{ once: true }});
+                        }} catch(e) {{}}
+                        setTimeout(showPromptOnParent, 2500);
+                    }}
+
+                    if (pImg) {{
+                        if (pImg.complete) setTimeout(doPrint, 150);
+                        else pImg.onload = function() {{ setTimeout(doPrint, 150); }};
+                    }} else {{
+                        setTimeout(doPrint, 200);
+                    }}
+                }} catch(err) {{
+                    console.error('runDirectPrint error:', err);
+                }}
+            }};
+
+            // Inject persistent head delegation script if not already present
+            if (!pDoc.getElementById('preview-overlay-delegation-js')) {{
+                const s = pDoc.createElement('script');
+                s.id = 'preview-overlay-delegation-js';
+                s.textContent = `
+                (function() {{
+                    document.addEventListener('click', function(e) {{
+                        // 1. Reopen preview overlay button
+                        const reopen = e.target.closest('#btn-reopen-preview') || e.target.closest('.btn-reopen-preview');
+                        if (reopen) {{
+                            e.preventDefault();
+                            e.stopPropagation();
+                            const ov = document.getElementById('preview-modal-overlay');
+                            if (ov) {{
+                                ov.classList.remove('is-hidden');
+                                ov.scrollTop = 0;
+                            }}
+                            return;
+                        }}
+
+                        // 2. Close overlay button
+                        const closeBtn = e.target.closest('#overlay-close-btn') || e.target.closest('.btn-overlay-close');
+                        if (closeBtn) {{
+                            e.preventDefault();
+                            e.stopPropagation();
+                            const ov = document.getElementById('preview-modal-overlay');
+                            if (ov) ov.classList.add('is-hidden');
+                            return;
+                        }}
+
+                        // 3. Print button in overlay
+                        const printBtn = e.target.closest('#overlay-print-btn') || e.target.closest('.btn-overlay-print');
+                        if (printBtn) {{
+                            e.preventDefault();
+                            e.stopPropagation();
+                            if (window.runDirectPrint) window.runDirectPrint();
+                            return;
+                        }}
+
+                        // 4. Download button in overlay
+                        const dlBtn = e.target.closest('#overlay-dl-btn');
+                        if (dlBtn) {{
+                            const ov = document.getElementById('preview-modal-overlay');
+                            if (ov) ov.classList.add('prompt-active');
+                            try {{
+                                document.body.classList.add('prompt-active');
+                                document.documentElement.classList.add('prompt-active');
+                            }} catch(err) {{}}
+                            const m = document.getElementById('another-prompt-modal');
+                            if (m) m.classList.add('is-open');
+                        }}
+
+                        // 5. Cancel button in "Generate Another?" modal
+                        const cancelBtn = e.target.closest('#prompt-btn-cancel');
+                        if (cancelBtn) {{
+                            e.preventDefault();
+                            e.stopPropagation();
+                            const m = document.getElementById('another-prompt-modal');
+                            if (m) m.classList.remove('is-open');
+                            const ov = document.getElementById('preview-modal-overlay');
+                            if (ov) ov.classList.remove('prompt-active');
+                            try {{
+                                document.body.classList.remove('prompt-active');
+                                document.documentElement.classList.remove('prompt-active');
+                            }} catch(err) {{}}
+                            return;
+                        }}
+
+                        // 6. Confirm button in "Generate Another?" modal
+                        const confirmBtn = e.target.closest('#prompt-btn-confirm');
+                        if (confirmBtn) {{
+                            e.preventDefault();
+                            e.stopPropagation();
+                            const m = document.getElementById('another-prompt-modal');
+                            if (m) m.classList.remove('is-open');
+                            const ov = document.getElementById('preview-modal-overlay');
+                            if (ov) {{
+                                ov.classList.remove('prompt-active');
+                                ov.classList.add('is-hidden');
+                            }}
+                            try {{
+                                document.body.classList.remove('prompt-active');
+                                document.documentElement.classList.remove('prompt-active');
+                            }} catch(err) {{}}
+                            try {{
+                                const buttons = Array.from(document.querySelectorAll('button'));
+                                const clearBtn = buttons.find(b => (b.innerText || b.textContent || '').includes('Clear Form'));
+                                if (clearBtn) clearBtn.click();
+                            }} catch(err) {{}}
+                            try {{
+                                window.scrollTo({{ top: 0, behavior: 'smooth' }});
+                            }} catch(err) {{}}
+                            return;
+                        }}
+                    }}, true);
+
+                    // Prevent wheel/touch bubbling when prompt is open
+                    const stopScroll = function(e) {{
+                        const m = document.getElementById('another-prompt-modal');
+                        const ov = document.getElementById('preview-modal-overlay');
+                        if ((m && m.classList.contains('is-open')) || (ov && ov.classList.contains('prompt-active'))) {{
+                            const withinModal = e.target && e.target.closest && e.target.closest('.prompt-dialog-box');
+                            if (!withinModal) {{
+                                e.preventDefault();
+                                e.stopPropagation();
+                                return false;
+                            }}
+                        }}
+                    }};
+                    document.addEventListener('wheel', stopScroll, {{ passive: false }});
+                    document.addEventListener('touchmove', stopScroll, {{ passive: false }});
+                }})();
+                `;
+                pDoc.head.appendChild(s);
+            }}
+
+            // Also attach listener to download button in page
+            const dlBtn = pDoc.querySelector('[data-testid="stDownloadButton"] button');
+            if (dlBtn && !dlBtn.__promptBound) {{
+                dlBtn.__promptBound = true;
+                dlBtn.addEventListener('click', function() {{
+                    const ov = pDoc.getElementById('preview-modal-overlay');
+                    if (ov) ov.classList.add('prompt-active');
                     try {{
                         pDoc.body.classList.add('prompt-active');
                         pDoc.documentElement.classList.add('prompt-active');
                     }} catch(e) {{}}
-                }}
-                function hidePrompt() {{
-                    if (modal) modal.classList.remove('is-open');
-                    if (overlay) overlay.classList.remove('prompt-active');
-                    try {{
-                        pDoc.body.classList.remove('prompt-active');
-                        pDoc.documentElement.classList.remove('prompt-active');
-                    }} catch(e) {{}}
-                }}
-                function closeOverlay() {{
-                    if (overlay) overlay.classList.add('is-hidden');
-                }}
-                function openOverlay() {{
-                    if (overlay) {{
-                        overlay.classList.remove('is-hidden');
-                        overlay.scrollTop = 0;
-                    }}
-                }}
-
-                if (modal && !modal.__scrollLocked) {{
-                    modal.__scrollLocked = true;
-                    const stopModalScroll = function(e) {{
-                        e.preventDefault();
-                        e.stopPropagation();
-                        return false;
-                    }};
-                    modal.addEventListener('wheel', stopModalScroll, {{ passive: false }});
-                    modal.addEventListener('touchmove', stopModalScroll, {{ passive: false }});
-                }}
-
-                if (overlay && !overlay.__guardScroll) {{
-                    overlay.__guardScroll = true;
-                    const guardOverlayScroll = function(e) {{
-                        if (overlay.classList.contains('prompt-active')) {{
-                            e.preventDefault();
-                            e.stopPropagation();
-                            return false;
-                        }}
-                    }};
-                    overlay.addEventListener('wheel', guardOverlayScroll, {{ passive: false }});
-                    overlay.addEventListener('touchmove', guardOverlayScroll, {{ passive: false }});
-                }}
-
-                if (btnClose && !btnClose.__bound) {{
-                    btnClose.__bound = true;
-                    btnClose.addEventListener('click', function(e) {{
-                        e.preventDefault();
-                        closeOverlay();
-                    }});
-                }}
-
-                if (btnReopen && !btnReopen.__bound) {{
-                    btnReopen.__bound = true;
-                    btnReopen.addEventListener('click', function(e) {{
-                        e.preventDefault();
-                        openOverlay();
-                    }});
-                }}
-
-                function runDirectPrint() {{
-                    try {{
-                        let printFrame = pDoc.getElementById('app-direct-print-frame');
-                        if (printFrame) {{
-                            printFrame.remove();
-                        }}
-                        printFrame = pDoc.createElement('iframe');
-                        printFrame.id = 'app-direct-print-frame';
-                        printFrame.style.position = 'fixed';
-                        printFrame.style.top = '-10000px';
-                        printFrame.style.left = '-10000px';
-                        printFrame.style.width = '1000px';
-                        printFrame.style.height = '1400px';
-                        printFrame.style.border = '0';
-                        printFrame.style.visibility = 'hidden';
-                        pDoc.body.appendChild(printFrame);
-
-                        const frameDoc = printFrame.contentWindow.document;
-                        frameDoc.open();
-                        frameDoc.write(`
-                            <!DOCTYPE html>
-                            <html>
-                            <head>
-                                <title>Abstract of Canvass</title>
-                                <style>
-                                    @page {{
-                                        size: auto;
-                                        margin: 0mm;
-                                    }}
-                                    @media print {{
-                                        html, body {{
-                                            margin: 0 !important;
-                                            padding: 0 !important;
-                                            background: #ffffff !important;
-                                        }}
-                                        img {{
-                                            width: 100% !important;
-                                            max-width: 100% !important;
-                                            height: auto !important;
-                                            display: block !important;
-                                            page-break-inside: avoid !important;
-                                        }}
-                                    }}
-                                    html, body {{
-                                        margin: 0;
-                                        padding: 0;
-                                        background: #ffffff;
-                                    }}
-                                    img {{
-                                        width: 100%;
-                                        height: auto;
-                                        display: block;
-                                    }}
-                                </style>
-                            </head>
-                            <body>
-                                <div id="print-body-content"></div>
-                            </body>
-                            </html>
-                        `);
-                        frameDoc.close();
-
-                        const printBodyContainer = frameDoc.getElementById('print-body-content');
-                        const hasPng = "{png_b64}".length > 10;
-                        if (hasPng) {{
-                            printBodyContainer.innerHTML = '<img id="print-image" src="data:image/png;base64,{png_b64}" />';
-                        }} else {{
-                            const paperElem = pDoc.getElementById('paper-card-root');
-                            printBodyContainer.innerHTML = paperElem ? paperElem.innerHTML : '';
-                        }}
-
-                        const pImg = frameDoc.getElementById('print-image');
-                        function doPrint() {{
-                            try {{
-                                printFrame.contentWindow.focus();
-                                printFrame.contentWindow.print();
-                            }} catch(e) {{
-                                console.error('Print trigger error:', e);
-                            }}
-                            try {{
-                                printFrame.contentWindow.addEventListener('afterprint', function() {{
-                                    setTimeout(showPrompt, 600);
-                                }}, {{ once: true }});
-                            }} catch(e) {{}}
-                            setTimeout(showPrompt, 2500);
-                        }}
-
-                        if (pImg) {{
-                            if (pImg.complete) {{
-                                setTimeout(doPrint, 150);
-                            }} else {{
-                                pImg.onload = function() {{
-                                    setTimeout(doPrint, 150);
-                                }};
-                            }}
-                        }} else {{
-                            setTimeout(doPrint, 200);
-                        }}
-                    }} catch(err) {{
-                        console.error('runDirectPrint error:', err);
-                        setTimeout(showPrompt, 1000);
-                    }}
-                }}
-
-                pWin.runDirectPrint = runDirectPrint;
-
-                if (btnPrint && !btnPrint.__bound) {{
-                    btnPrint.__bound = true;
-                    btnPrint.addEventListener('click', function(e) {{
-                        e.preventDefault();
-                        runDirectPrint();
-                    }});
-                }}
-
-                if (btnDl && !btnDl.__bound) {{
-                    btnDl.__bound = true;
-                    btnDl.addEventListener('click', function() {{
-                        // Immediately lock scrolling on click
-                        if (overlay) overlay.classList.add('prompt-active');
-                        try {{
-                            pDoc.body.classList.add('prompt-active');
-                            pDoc.documentElement.classList.add('prompt-active');
-                        }} catch(e) {{}}
-                        // Fast instant popout to prevent user from scrolling
-                        showPrompt();
-                    }});
-                }}
-
-                if (btnCancel && !btnCancel.__bound) {{
-                    btnCancel.__bound = true;
-                    btnCancel.addEventListener('click', function(e) {{
-                        e.preventDefault();
-                        hidePrompt();
-                    }});
-                }}
-
-                if (btnConfirm && !btnConfirm.__bound) {{
-                    btnConfirm.__bound = true;
-                    btnConfirm.addEventListener('click', function(e) {{
-                        e.preventDefault();
-                        hidePrompt();
-                        closeOverlay();
-                        try {{
-                            const buttons = Array.from(pDoc.querySelectorAll('button'));
-                            const clearBtn = buttons.find(b => (b.innerText || b.textContent || '').includes('Clear Form'));
-                            if (clearBtn) {{
-                                clearBtn.click();
-                            }}
-                        }} catch(err) {{
-                            console.log('Error triggering clear form:', err);
-                        }}
-                        try {{
-                            pWin.scrollTo({{ top: 0, behavior: 'smooth' }});
-                        }} catch(err) {{}}
-                    }});
-                }}
-
-                const dlBtn = pDoc.querySelector('[data-testid="stDownloadButton"] button');
-                if (dlBtn && !dlBtn.__promptBound) {{
-                    dlBtn.__promptBound = true;
-                    dlBtn.addEventListener('click', function() {{
-                        if (overlay) overlay.classList.add('prompt-active');
-                        try {{
-                            pDoc.body.classList.add('prompt-active');
-                            pDoc.documentElement.classList.add('prompt-active');
-                        }} catch(e) {{}}
-                        showPrompt();
-                    }});
-                }}
-            }} catch(e) {{
-                console.log('setupOverlayHandlers error:', e);
+                    const m = pDoc.getElementById('another-prompt-modal');
+                    if (m) m.classList.add('is-open');
+                }});
             }}
+        }} catch(e) {{
+            console.log('Overlay script initialization error:', e);
         }}
-
-        setupOverlayHandlers();
-        const interval = setInterval(setupOverlayHandlers, 250);
-        setTimeout(function() {{ clearInterval(interval); }}, 6000);
     }})();
     </script>
     """, height=1)
