@@ -1,0 +1,186 @@
+# ==============================================================================
+# ABSTRACT OF CANVASS DATABASE HISTORY
+# Each record below is saved automatically upon document generation.
+# ==============================================================================
+# USER_CLEARED_DATABASE
+
+================================================================================
+Record ID: REC_20261127_014139_0433H
+Abstract Number: AC-0433H-10-26
+RFQ Closing Date: October 26, 2026
+Bidder 1: RBK PRINTING SERVICES
+Amount: 1,000.00
+Extra Information needed for loading into form:
+Purpose: TARPAULIN FOR USE IN UPCOMING GIVE A GIFT FOR INDIGENT PWD
+Include LGU Suffix: True
+Bidder 1 Location: Bucal 1, Maragondon, Cavite
+Bidder 2: CAVITE PRINT EXPRESS | Naic, Cavite | ₱ 1,250.00
+Bidder 3: MARAGONDON GRAPHICS & PRINTS | Poblacion 1A, Maragondon, Cavite | ₱ 1,500.00
+Timestamp: Nov 27, 01:41 AM
+Data JSON: {"record_id": "REC_20261127_014139_0433H", "ac_number": "AC-0433H-10-26", "ac_code": "0433H", "ac_month": "10", "ac_year": "26", "rfq_closing_date": "October 26, 2026", "opened_date": "October 26, 2026", "winning_bidder": "RBK PRINTING SERVICES", "winning_location": "Bucal 1, Maragondon, Cavite", "winning_amount": "₱ 1,000.00", "purpose_desc": "TARPAULIN FOR USE IN UPCOMING GIVE A GIFT FOR INDIGENT PWD", "include_lgu_suffix": true, "purpose": "TARPAULIN FOR USE IN UPCOMING GIVE A GIFT FOR INDIGENT PWD IN LGU MARAGONDON, CAVITE.", "b1_name": "RBK PRINTING SERVICES", "b1_loc": "Bucal 1, Maragondon, Cavite", "b1_amt": "₱ 1,000.00", "b2_name": "CAVITE PRINT EXPRESS", "b2_loc": "Naic, Cavite", "b2_amt": "₱ 1,250.00", "b3_name": "MARAGONDON GRAPHICS & PRINTS", "b3_loc": "Poblacion 1A, Maragondon, Cavite", "b3_amt": "₱ 1,500.00", "time_str": "Nov 27, 01:41 AM"}
+================================================================================
+================================================================================
+Record ID: REC_20261127_014155_0433H
+Abstract Number: AC-0433H-10-26
+RFQ Closing Date: October 26, 2026
+Bidder 1: RBK PRINTING SERVICES
+Amount: 1,000.00
+Extra Information needed for loading into form:
+Purpose: TARPAULIN FOR USE IN UPCOMING GIVE A GIFT FOR INDIGENT PWD
+Include LGU Suffix: True
+Bidder 1 Location: Bucal 1, Maragondon, Cavite
+Bidder 2: CAVITE PRINT EXPRESS | Naic, Cavite | ₱ 1,250.00
+Bidder 3: MARAGONDON GRAPHICS & PRINTS | Poblacion 1A, Maragondon, Cavite | ₱ 1,500.00
+Timestamp: Nov 27, 01:41 AM
+Data JSON: {"record_id": "REC_20261127_014155_0433H", "ac_number": "AC-0433H-10-26", "ac_code": "0433H", "ac_month": "10", "ac_year": "26", "rfq_closing_date": "October 26, 2026", "opened_date": "October 26, 2026", "winning_bidder": "RBK PRINTING SERVICES", "winning_location": "Bucal 1, Maragondon, Cavite", "winning_amount": "₱ 1,000.00", "purpose_desc": "TARPAULIN FOR USE IN UPCOMING GIVE A GIFT FOR INDIGENT PWD", "include_lgu_suffix": true, "purpose": "TARPAULIN FOR USE IN UPCOMING GIVE A GIFT FOR INDIGENT PWD IN LGU MARAGONDON, CAVITE.", "b1_name": "RBK PRINTING SERVICES", "b1_loc": "Bucal 1, Maragondon, Cavite", "b1_amt": "₱ 1,000.00", "b2_name": "CAVITE PRINT EXPRESS", "b2_loc": "Naic, Cavite", "b2_amt": "₱ 1,250.00", "b3_name": "MARAGONDON GRAPHICS & PRINTS", "b3_loc": "Poblacion 1A, Maragondon, Cavite", "b3_amt": "₱ 1,500.00", "time_str": "Nov 27, 01:41 AM"}
+================================================================================
+================================================================================
+Record ID: REC_20261127_014410_0433H
+Abstract Number: AC-0433H-10-26
+RFQ Closing Date: October 26, 2026
+Bidder 1: RBK PRINTING SERVICES
+Amount: 1,000.00
+Extra Information needed for loading into form:
+Purpose: TARPAULIN FOR USE IN UPCOMING GIVE A GIFT FOR INDIGENT PWD
+Include LGU Suffix: True
+Bidder 1 Location: Bucal 1, Maragondon, Cavite
+Bidder 2: CAVITE PRINT EXPRESS | Naic, Cavite | ₱ 1,250.00
+Bidder 3: MARAGONDON GRAPHICS & PRINTS | Poblacion 1A, Maragondon, Cavite | ₱ 1,500.00
+Timestamp: Nov 27, 01:44 AM
+Data JSON: {"record_id": "REC_20261127_014410_0433H", "ac_number": "AC-0433H-10-26", "ac_code": "0433H", "ac_month": "10", "ac_year": "26", "rfq_closing_date": "October 26, 2026", "opened_date": "October 26, 2026", "winning_bidder": "RBK PRINTING SERVICES", "winning_location": "Bucal 1, Maragondon, Cavite", "winning_amount": "₱ 1,000.00", "purpose_desc": "TARPAULIN FOR USE IN UPCOMING GIVE A GIFT FOR INDIGENT PWD", "include_lgu_suffix": true, "purpose": "TARPAULIN FOR USE IN UPCOMING GIVE A GIFT FOR INDIGENT PWD IN LGU MARAGONDON, CAVITE.", "b1_name": "RBK PRINTING SERVICES", "b1_loc": "Bucal 1, Maragondon, Cavite", "b1_amt": "₱ 1,000.00", "b2_name": "CAVITE PRINT EXPRESS", "b2_loc": "Naic, Cavite", "b2_amt": "₱ 1,250.00", "b3_name": "MARAGONDON GRAPHICS & PRINTS", "b3_loc": "Poblacion 1A, Maragondon, Cavite", "b3_amt": "₱ 1,500.00", "time_str": "Nov 27, 01:44 AM"}
+================================================================================
+================================================================================
+Record ID: REC_20261127_014420_0433H
+Abstract Number: AC-0433H-10-26
+RFQ Closing Date: October 26, 2026
+Bidder 1: RBK PRINTING SERVICES
+Amount: 1,000.00
+Extra Information needed for loading into form:
+Purpose: TARPAULIN FOR USE IN UPCOMING GIVE A GIFT FOR INDIGENT PWD
+Include LGU Suffix: True
+Bidder 1 Location: Bucal 1, Maragondon, Cavite
+Bidder 2: CAVITE PRINT EXPRESS | Naic, Cavite | ₱ 1,250.00
+Bidder 3: MARAGONDON GRAPHICS & PRINTS | Poblacion 1A, Maragondon, Cavite | ₱ 1,500.00
+Timestamp: Nov 27, 01:44 AM
+Data JSON: {"record_id": "REC_20261127_014420_0433H", "ac_number": "AC-0433H-10-26", "ac_code": "0433H", "ac_month": "10", "ac_year": "26", "rfq_closing_date": "October 26, 2026", "opened_date": "October 26, 2026", "winning_bidder": "RBK PRINTING SERVICES", "winning_location": "Bucal 1, Maragondon, Cavite", "winning_amount": "₱ 1,000.00", "purpose_desc": "TARPAULIN FOR USE IN UPCOMING GIVE A GIFT FOR INDIGENT PWD", "include_lgu_suffix": true, "purpose": "TARPAULIN FOR USE IN UPCOMING GIVE A GIFT FOR INDIGENT PWD IN LGU MARAGONDON, CAVITE.", "b1_name": "RBK PRINTING SERVICES", "b1_loc": "Bucal 1, Maragondon, Cavite", "b1_amt": "₱ 1,000.00", "b2_name": "CAVITE PRINT EXPRESS", "b2_loc": "Naic, Cavite", "b2_amt": "₱ 1,250.00", "b3_name": "MARAGONDON GRAPHICS & PRINTS", "b3_loc": "Poblacion 1A, Maragondon, Cavite", "b3_amt": "₱ 1,500.00", "time_str": "Nov 27, 01:44 AM"}
+================================================================================
+================================================================================
+Record ID: REC_20261127_014434_04323H
+Abstract Number: AC-04323H-10-26
+RFQ Closing Date: October 26, 2026
+Bidder 1: RBK PRINTING SERVICES
+Amount: 1,000.00
+Extra Information needed for loading into form:
+Purpose: TARPAULIN FOR USE IN UPCOMING GIVE A GIFT FOR INDIGENT PWD
+Include LGU Suffix: True
+Bidder 1 Location: Bucal 1, Maragondon, Cavite
+Bidder 2: CAVITE PRINT EXPRESS | Naic, Cavite | ₱ 1,250.00
+Bidder 3: MARAGONDON GRAPHICS & PRINTS | Poblacion 1A, Maragondon, Cavite | ₱ 1,500.00
+Timestamp: Nov 27, 01:44 AM
+Data JSON: {"record_id": "REC_20261127_014434_04323H", "ac_number": "AC-04323H-10-26", "ac_code": "04323H", "ac_month": "10", "ac_year": "26", "rfq_closing_date": "October 26, 2026", "opened_date": "October 26, 2026", "winning_bidder": "RBK PRINTING SERVICES", "winning_location": "Bucal 1, Maragondon, Cavite", "winning_amount": "₱ 1,000.00", "purpose_desc": "TARPAULIN FOR USE IN UPCOMING GIVE A GIFT FOR INDIGENT PWD", "include_lgu_suffix": true, "purpose": "TARPAULIN FOR USE IN UPCOMING GIVE A GIFT FOR INDIGENT PWD IN LGU MARAGONDON, CAVITE.", "b1_name": "RBK PRINTING SERVICES", "b1_loc": "Bucal 1, Maragondon, Cavite", "b1_amt": "₱ 1,000.00", "b2_name": "CAVITE PRINT EXPRESS", "b2_loc": "Naic, Cavite", "b2_amt": "₱ 1,250.00", "b3_name": "MARAGONDON GRAPHICS & PRINTS", "b3_loc": "Poblacion 1A, Maragondon, Cavite", "b3_amt": "₱ 1,500.00", "time_str": "Nov 27, 01:44 AM"}
+================================================================================
+================================================================================
+Record ID: REC_20261127_014505_0412H
+Abstract Number: AC-0412H-10-26
+RFQ Closing Date: October 26, 2026
+Bidder 1: RBK PRINTING SERVICES
+Amount: 10,200.00
+Extra Information needed for loading into form:
+Purpose: TARPAULIN FOR USE IN UPCOMING GIVE A GIFT FOR INDIGENT PWD
+Include LGU Suffix: True
+Bidder 1 Location: Bucal 1, Maragondon, Cavite
+Bidder 2: CAVITE PRINT EXPRESS | Naic, Cavite | ₱ 12,560.00
+Bidder 3: MARAGONDON GRAPHICS & PRINTS | Poblacion 1A, Maragondon, Cavite | ₱ 15,200.00
+Timestamp: Nov 27, 01:45 AM
+Data JSON: {"record_id": "REC_20261127_014505_0412H", "ac_number": "AC-0412H-10-26", "ac_code": "0412H", "ac_month": "10", "ac_year": "26", "rfq_closing_date": "October 26, 2026", "opened_date": "October 26, 2026", "winning_bidder": "RBK PRINTING SERVICES", "winning_location": "Bucal 1, Maragondon, Cavite", "winning_amount": "₱ 10,200.00", "purpose_desc": "TARPAULIN FOR USE IN UPCOMING GIVE A GIFT FOR INDIGENT PWD", "include_lgu_suffix": true, "purpose": "TARPAULIN FOR USE IN UPCOMING GIVE A GIFT FOR INDIGENT PWD IN LGU MARAGONDON, CAVITE.", "b1_name": "RBK PRINTING SERVICES", "b1_loc": "Bucal 1, Maragondon, Cavite", "b1_amt": "₱ 10,200.00", "b2_name": "CAVITE PRINT EXPRESS", "b2_loc": "Naic, Cavite", "b2_amt": "₱ 12,560.00", "b3_name": "MARAGONDON GRAPHICS & PRINTS", "b3_loc": "Poblacion 1A, Maragondon, Cavite", "b3_amt": "₱ 15,200.00", "time_str": "Nov 27, 01:45 AM"}
+================================================================================
+================================================================================
+Record ID: REC_20261127_014948_0433H
+Abstract Number: AC-0433H-10-26
+RFQ Closing Date: October 26, 2026
+Bidder 1: RBK PRINTING SERVICES
+Amount: 1,000.00
+Extra Information needed for loading into form:
+Purpose: PURCHASE OF ID LACE FOR GIP
+Include LGU Suffix: True
+Bidder 1 Location: Bucal 1, Maragondon, Cavite
+Bidder 2: CAVITE PRINT EXPRESS | Naic, Cavite | ₱ 1,250.00
+Bidder 3: MARAGONDON GRAPHICS & PRINTS | Poblacion 1A, Maragondon, Cavite | ₱ 1,500.00
+Timestamp: Nov 27, 01:49 AM
+Data JSON: {"record_id": "REC_20261127_014948_0433H", "ac_number": "AC-0433H-10-26", "ac_code": "0433H", "ac_month": "10", "ac_year": "26", "rfq_closing_date": "October 26, 2026", "opened_date": "October 26, 2026", "winning_bidder": "RBK PRINTING SERVICES", "winning_location": "Bucal 1, Maragondon, Cavite", "winning_amount": "₱ 1,000.00", "purpose_desc": "PURCHASE OF ID LACE FOR GIP", "include_lgu_suffix": true, "purpose": "PURCHASE OF ID LACE FOR GIP IN LGU MARAGONDON, CAVITE.", "b1_name": "RBK PRINTING SERVICES", "b1_loc": "Bucal 1, Maragondon, Cavite", "b1_amt": "₱ 1,000.00", "b2_name": "CAVITE PRINT EXPRESS", "b2_loc": "Naic, Cavite", "b2_amt": "₱ 1,250.00", "b3_name": "MARAGONDON GRAPHICS & PRINTS", "b3_loc": "Poblacion 1A, Maragondon, Cavite", "b3_amt": "₱ 1,500.00", "time_str": "Nov 27, 01:49 AM"}
+================================================================================
+================================================================================
+Record ID: REC_20261127_020102_0433H
+Abstract Number: AC-0433H-10-26
+RFQ Closing Date: October 26, 2026
+Bidder 1: RBK PRINTING SERVICES
+Amount: 1,000.00
+Extra Information needed for loading into form:
+Purpose: TARPAULIN FOR USE IN UPCOMING GIVE A GIFT FOR INDIGENT PWD
+Include LGU Suffix: True
+Bidder 1 Location: Bucal 1, Maragondon, Cavite
+Bidder 2: CAVITE PRINT EXPRESS | Naic, Cavite | ₱ 1,250.00
+Bidder 3: MARAGONDON GRAPHICS & PRINTS | Poblacion 1A, Maragondon, Cavite | ₱ 1,500.00
+Timestamp: Nov 27, 02:01 AM
+Data JSON: {"record_id": "REC_20261127_020102_0433H", "ac_number": "AC-0433H-10-26", "ac_code": "0433H", "ac_month": "10", "ac_year": "26", "rfq_closing_date": "October 26, 2026", "opened_date": "October 26, 2026", "winning_bidder": "RBK PRINTING SERVICES", "winning_location": "Bucal 1, Maragondon, Cavite", "winning_amount": "₱ 1,000.00", "purpose_desc": "TARPAULIN FOR USE IN UPCOMING GIVE A GIFT FOR INDIGENT PWD", "include_lgu_suffix": true, "purpose": "TARPAULIN FOR USE IN UPCOMING GIVE A GIFT FOR INDIGENT PWD IN LGU MARAGONDON, CAVITE.", "b1_name": "RBK PRINTING SERVICES", "b1_loc": "Bucal 1, Maragondon, Cavite", "b1_amt": "₱ 1,000.00", "b2_name": "CAVITE PRINT EXPRESS", "b2_loc": "Naic, Cavite", "b2_amt": "₱ 1,250.00", "b3_name": "MARAGONDON GRAPHICS & PRINTS", "b3_loc": "Poblacion 1A, Maragondon, Cavite", "b3_amt": "₱ 1,500.00", "time_str": "Nov 27, 02:01 AM"}
+================================================================================
+================================================================================
+Record ID: REC_20261127_061337_0433H
+Abstract Number: AC-0433H-10-26
+RFQ Closing Date: October 26, 2026
+Bidder 1: RBK PRINTING SERVICES
+Amount: 1,000.00
+Extra Information needed for loading into form:
+Purpose: TARPAULIN FOR USE IN UPCOMING GIVE A GIFT FOR INDIGENT PWD
+Include LGU Suffix: True
+Bidder 1 Location: Bucal 1, Maragondon, Cavite
+Bidder 2: CAVITE PRINT EXPRESS | Naic, Cavite | ₱ 1,250.00
+Bidder 3: MARAGONDON GRAPHICS & PRINTS | Poblacion 1A, Maragondon, Cavite | ₱ 1,500.00
+Timestamp: Nov 27, 06:13 AM
+Data JSON: {"record_id": "REC_20261127_061337_0433H", "ac_number": "AC-0433H-10-26", "ac_code": "0433H", "ac_month": "10", "ac_year": "26", "rfq_closing_date": "October 26, 2026", "opened_date": "October 26, 2026", "winning_bidder": "RBK PRINTING SERVICES", "winning_location": "Bucal 1, Maragondon, Cavite", "winning_amount": "₱ 1,000.00", "purpose_desc": "TARPAULIN FOR USE IN UPCOMING GIVE A GIFT FOR INDIGENT PWD", "include_lgu_suffix": true, "purpose": "TARPAULIN FOR USE IN UPCOMING GIVE A GIFT FOR INDIGENT PWD IN LGU MARAGONDON, CAVITE.", "b1_name": "RBK PRINTING SERVICES", "b1_loc": "Bucal 1, Maragondon, Cavite", "b1_amt": "₱ 1,000.00", "b2_name": "CAVITE PRINT EXPRESS", "b2_loc": "Naic, Cavite", "b2_amt": "₱ 1,250.00", "b3_name": "MARAGONDON GRAPHICS & PRINTS", "b3_loc": "Poblacion 1A, Maragondon, Cavite", "b3_amt": "₱ 1,500.00", "time_str": "Nov 27, 06:13 AM"}
+================================================================================
+================================================================================
+Record ID: REC_20261127_061509_0433H
+Abstract Number: AC-0433H-10-26
+RFQ Closing Date: October 26, 2026
+Bidder 1: RBK PRINTING SERVICES
+Amount: 1,000.00
+Extra Information needed for loading into form:
+Purpose: TARPAULIN FOR USE IN UPCOMING GIVE A GIFT FOR INDIGENT PWD
+Include LGU Suffix: True
+Bidder 1 Location: Bucal 1, Maragondon, Cavite
+Bidder 2: CAVITE PRINT EXPRESS | Naic, Cavite | ₱ 1,250.00
+Bidder 3: MARAGONDON GRAPHICS & PRINTS | Poblacion 1A, Maragondon, Cavite | ₱ 1,500.00
+Timestamp: Nov 27, 06:15 AM
+Data JSON: {"record_id": "REC_20261127_061509_0433H", "ac_number": "AC-0433H-10-26", "ac_code": "0433H", "ac_month": "10", "ac_year": "26", "rfq_closing_date": "October 26, 2026", "opened_date": "October 26, 2026", "winning_bidder": "RBK PRINTING SERVICES", "winning_location": "Bucal 1, Maragondon, Cavite", "winning_amount": "₱ 1,000.00", "purpose_desc": "TARPAULIN FOR USE IN UPCOMING GIVE A GIFT FOR INDIGENT PWD", "include_lgu_suffix": true, "purpose": "TARPAULIN FOR USE IN UPCOMING GIVE A GIFT FOR INDIGENT PWD IN LGU MARAGONDON, CAVITE.", "b1_name": "RBK PRINTING SERVICES", "b1_loc": "Bucal 1, Maragondon, Cavite", "b1_amt": "₱ 1,000.00", "b2_name": "CAVITE PRINT EXPRESS", "b2_loc": "Naic, Cavite", "b2_amt": "₱ 1,250.00", "b3_name": "MARAGONDON GRAPHICS & PRINTS", "b3_loc": "Poblacion 1A, Maragondon, Cavite", "b3_amt": "₱ 1,500.00", "time_str": "Nov 27, 06:15 AM"}
+================================================================================
+================================================================================
+Record ID: REC_20261127_061518_0433H
+Abstract Number: AC-0433H-10-26
+RFQ Closing Date: October 26, 2026
+Bidder 1: RBK PRINTING SERVICES
+Amount: 1,000.00
+Extra Information needed for loading into form:
+Purpose: TARPAULIN FOR USE IN UPCOMING GIVE A GIFT FOR INDIGENT PWD
+Include LGU Suffix: True
+Bidder 1 Location: Bucal 1, Maragondon, Cavite
+Bidder 2: CAVITE PRINT EXPRESS | Naic, Cavite | ₱ 1,250.00
+Bidder 3: MARAGONDON GRAPHICS & PRINTS | Poblacion 1A, Maragondon, Cavite | ₱ 1,500.00
+Timestamp: Nov 27, 06:15 AM
+Data JSON: {"record_id": "REC_20261127_061518_0433H", "ac_number": "AC-0433H-10-26", "ac_code": "0433H", "ac_month": "10", "ac_year": "26", "rfq_closing_date": "October 26, 2026", "opened_date": "October 26, 2026", "winning_bidder": "RBK PRINTING SERVICES", "winning_location": "Bucal 1, Maragondon, Cavite", "winning_amount": "₱ 1,000.00", "purpose_desc": "TARPAULIN FOR USE IN UPCOMING GIVE A GIFT FOR INDIGENT PWD", "include_lgu_suffix": true, "purpose": "TARPAULIN FOR USE IN UPCOMING GIVE A GIFT FOR INDIGENT PWD IN LGU MARAGONDON, CAVITE.", "b1_name": "RBK PRINTING SERVICES", "b1_loc": "Bucal 1, Maragondon, Cavite", "b1_amt": "₱ 1,000.00", "b2_name": "CAVITE PRINT EXPRESS", "b2_loc": "Naic, Cavite", "b2_amt": "₱ 1,250.00", "b3_name": "MARAGONDON GRAPHICS & PRINTS", "b3_loc": "Poblacion 1A, Maragondon, Cavite", "b3_amt": "₱ 1,500.00", "time_str": "Nov 27, 06:15 AM"}
+================================================================================
+================================================================================
+Record ID: REC_20261127_061703_0433H
+Abstract Number: AC-0433H-11-26
+RFQ Closing Date: November 26, 2026
+Bidder 1: RBK PRINTING SERVICES
+Amount: 1,000.00
+Extra Information needed for loading into form:
+Purpose: PURCHASE OF ID LACE FOR GIP
+Include LGU Suffix: True
+Bidder 1 Location: Bucal 1, Maragondon, Cavite
+Bidder 2: CAVITE PRINT EXPRESS | Naic, Cavite | ₱ 1,250.00
+Bidder 3: MARAGONDON GRAPHICS & PRINTS | Poblacion 1A, Maragondon, Cavite | ₱ 1,500.00
+Timestamp: Nov 27, 06:17 AM
+Data JSON: {"record_id": "REC_20261127_061703_0433H", "ac_number": "AC-0433H-11-26", "ac_code": "0433H", "ac_month": "11", "ac_year": "26", "rfq_closing_date": "November 26, 2026", "opened_date": "November 26, 2026", "winning_bidder": "RBK PRINTING SERVICES", "winning_location": "Bucal 1, Maragondon, Cavite", "winning_amount": "₱ 1,000.00", "purpose_desc": "PURCHASE OF ID LACE FOR GIP", "include_lgu_suffix": true, "purpose": "PURCHASE OF ID LACE FOR GIP IN LGU MARAGONDON, CAVITE.", "b1_name": "RBK PRINTING SERVICES", "b1_loc": "Bucal 1, Maragondon, Cavite", "b1_amt": "₱ 1,000.00", "b2_name": "CAVITE PRINT EXPRESS", "b2_loc": "Naic, Cavite", "b2_amt": "₱ 1,250.00", "b3_name": "MARAGONDON GRAPHICS & PRINTS", "b3_loc": "Poblacion 1A, Maragondon, Cavite", "b3_amt": "₱ 1,500.00", "time_str": "Nov 27, 06:17 AM"}
+================================================================================
