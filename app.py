@@ -2211,61 +2211,194 @@ def clean_purpose_description(text: str) -> str:
     return cleaned.strip(" ,.-")
 
 def generate_pdf_from_docx_bytes(docx_bytes: bytes) -> bytes:
-    """Convert generated docx bytes to PDF bytes using Word COM on Windows."""
+    """Convert generated docx bytes to PDF bytes using LibreOffice (Linux/Cloud) or Word COM (Windows)."""
     if not docx_bytes:
         return b""
-    import tempfile, time
+    import tempfile, time, subprocess, shutil, sys
     with tempfile.TemporaryDirectory() as tmp_dir:
         tmp_docx = os.path.join(tmp_dir, "document.docx")
         tmp_pdf = os.path.join(tmp_dir, "document.pdf")
         with open(tmp_docx, "wb") as f:
             f.write(docx_bytes)
         
-        try:
-            import win32com.client
-            import pythoncom
-            pythoncom.CoInitialize()
-            word = None
-            doc = None
+        # 1. Try LibreOffice / soffice (Standard on Linux & Streamlit Cloud)
+        soffice_bin = shutil.which("libreoffice") or shutil.which("soffice")
+        if soffice_bin:
             try:
-                try:
-                    word = win32com.client.DispatchEx("Word.Application")
-                except Exception:
-                    word = win32com.client.Dispatch("Word.Application")
-                word.Visible = False
-                word.DisplayAlerts = False
-                doc = word.Documents.Open(os.path.abspath(tmp_docx), ReadOnly=True)
-                try:
-                    doc.SaveAs2(os.path.abspath(tmp_pdf), FileFormat=17)
-                except Exception:
-                    doc.SaveAs(os.path.abspath(tmp_pdf), FileFormat=17)
-                doc.Close(False)
-                doc = None
-            finally:
-                if doc:
-                    try:
-                        doc.Close(False)
-                    except Exception:
-                        pass
-                if word:
-                    try:
-                        word.Quit()
-                    except Exception:
-                        pass
-                pythoncom.CoUninitialize()
-            
-            for _ in range(20):
+                cmd = [soffice_bin, "--headless", "--convert-to", "pdf", "--outdir", tmp_dir, os.path.abspath(tmp_docx)]
+                subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=35)
+                for _ in range(15):
+                    if os.path.exists(tmp_pdf) and os.path.getsize(tmp_pdf) > 0:
+                        break
+                    time.sleep(0.1)
                 if os.path.exists(tmp_pdf) and os.path.getsize(tmp_pdf) > 0:
-                    break
-                time.sleep(0.1)
+                    with open(tmp_pdf, "rb") as f:
+                        return f.read()
+            except Exception as e:
+                print("LibreOffice conversion failed:", repr(e))
+
+        # 2. Try Windows MS Word COM (on local Windows)
+        if sys.platform == "win32":
+            try:
+                import win32com.client
+                import pythoncom
+                pythoncom.CoInitialize()
+                word = None
+                doc = None
+                try:
+                    try:
+                        word = win32com.client.DispatchEx("Word.Application")
+                    except Exception:
+                        word = win32com.client.Dispatch("Word.Application")
+                    word.Visible = False
+                    word.DisplayAlerts = False
+                    doc = word.Documents.Open(os.path.abspath(tmp_docx), ReadOnly=True)
+                    try:
+                        doc.SaveAs2(os.path.abspath(tmp_pdf), FileFormat=17)
+                    except Exception:
+                        doc.SaveAs(os.path.abspath(tmp_pdf), FileFormat=17)
+                    doc.Close(False)
+                    doc = None
+                finally:
+                    if doc:
+                        try:
+                            doc.Close(False)
+                        except Exception:
+                            pass
+                    if word:
+                        try:
+                            word.Quit()
+                        except Exception:
+                            pass
+                    pythoncom.CoUninitialize()
                 
-            if os.path.exists(tmp_pdf) and os.path.getsize(tmp_pdf) > 0:
-                with open(tmp_pdf, "rb") as f:
-                    return f.read()
-        except Exception as e:
-            print("ERROR in generate_pdf_from_docx_bytes:", repr(e))
+                for _ in range(20):
+                    if os.path.exists(tmp_pdf) and os.path.getsize(tmp_pdf) > 0:
+                        break
+                    time.sleep(0.1)
+                    
+                if os.path.exists(tmp_pdf) and os.path.getsize(tmp_pdf) > 0:
+                    with open(tmp_pdf, "rb") as f:
+                        return f.read()
+            except Exception as e:
+                print("Windows Word COM conversion failed:", repr(e))
             
     return b""
+
+def build_html_document_fallback(ctx: dict, logo_b64: str) -> str:
+    """Build a 1:1 crisp HTML paper document layout fallback when PDF conversion is unavailable."""
+    if not ctx:
+        return ""
+    b1_name = ctx.get("bidder_1_name", "")
+    b1_loc = ctx.get("bidder_1_location", "")
+    b1_amt = ctx.get("bidder_1_amount", "")
+    b2_name = ctx.get("bidder_2_name", "")
+    b2_loc = ctx.get("bidder_2_location", "")
+    b2_amt = ctx.get("bidder_2_amount", "")
+    b3_name = ctx.get("bidder_3_name", "")
+    b3_loc = ctx.get("bidder_3_location", "")
+    b3_amt = ctx.get("bidder_3_amount", "")
+    winner_name = ctx.get("winning_bidder_name", b1_name)
+    winner_loc = ctx.get("winning_bidder_location", b1_loc)
+    logo_tag = f'<img src="data:image/png;base64,{logo_b64}" style="width: 72px; height: 72px; object-fit: contain; margin-bottom: 4px;" alt="Seal" />' if logo_b64 else ''
+    
+    return f"""
+    <div class="doc-paper-fallback" style="background: #ffffff; color: #000000; font-family: 'Times New Roman', Times, serif; padding: 40px 48px; box-sizing: border-box; width: 100%; max-width: 800px; margin: 0 auto; line-height: 1.35; box-shadow: 0 4px 20px rgba(0,0,0,0.5); border-radius: 2px;">
+        <div style="text-align: center; margin-bottom: 14px;">
+            {logo_tag}
+            <div style="font-size: 13px;">Republic of the Philippines</div>
+            <div style="font-size: 13px;">Province of Cavite</div>
+            <div style="font-size: 14px; font-weight: bold; letter-spacing: 0.5px;">MUNICIPALITY OF MARAGONDON</div>
+            <div style="font-size: 17px; font-weight: bold; margin-top: 14px; text-decoration: underline; letter-spacing: 1px;">ABSTRACT OF CANVASS</div>
+        </div>
+        
+        <div style="font-size: 13px; margin-bottom: 12px; font-weight: bold;">
+            FOR: PAYMENT FOR THE {ctx.get('purpose', '')}
+        </div>
+        
+        <div style="text-align: right; font-size: 12.5px; margin-bottom: 16px; line-height: 1.4;">
+            <div>Opened at the Office of the Municipal</div>
+            <div>Mayor on <u>{ctx.get('opened_date', '')}</u></div>
+        </div>
+        
+        <table style="width: 100%; border-collapse: collapse; border: 1.5px solid #000000; margin-bottom: 18px; font-size: 12.5px;">
+            <thead>
+                <tr style="background: #f8fafc; font-weight: bold; text-align: center;">
+                    <th style="border: 1px solid #000000; padding: 8px 10px; width: 62%;">NAME OF BIDDERS</th>
+                    <th style="border: 1px solid #000000; padding: 8px 10px; width: 38%;">AMOUNT OF BID</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="border: 1px solid #000000; padding: 8px 10px; vertical-align: top;">
+                        <strong>1. {b1_name}</strong><br>
+                        <span style="font-size: 11.5px; padding-left: 14px; color: #222;">{b1_loc}</span>
+                    </td>
+                    <td style="border: 1px solid #000000; padding: 8px 10px; text-align: right; vertical-align: top; font-weight: bold;">
+                        {b1_amt}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid #000000; padding: 8px 10px; vertical-align: top;">
+                        <strong>2. {b2_name}</strong><br>
+                        <span style="font-size: 11.5px; padding-left: 14px; color: #222;">{b2_loc}</span>
+                    </td>
+                    <td style="border: 1px solid #000000; padding: 8px 10px; text-align: right; vertical-align: top; font-weight: bold;">
+                        {b2_amt}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid #000000; padding: 8px 10px; vertical-align: top;">
+                        <strong>3. {b3_name}</strong><br>
+                        <span style="font-size: 11.5px; padding-left: 14px; color: #222;">{b3_loc}</span>
+                    </td>
+                    <td style="border: 1px solid #000000; padding: 8px 10px; text-align: right; vertical-align: top; font-weight: bold;">
+                        {b3_amt}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div style="font-size: 12.5px; margin-bottom: 22px; text-align: justify; line-height: 1.45;">
+            Awarded to the lowest bidder <strong>{winner_name}</strong>, <strong>{winner_loc}</strong> same being reasonable and most advantageous to the government.
+        </div>
+        
+        <div style="margin-top: 14px; margin-bottom: 24px;">
+            <div style="text-align: center; font-size: 12px; font-weight: bold; margin-bottom: 18px; letter-spacing: 0.5px;">COMMITTEE ON AWARDS</div>
+            
+            <div style="display: flex; justify-content: space-around; text-align: center; font-size: 11px; margin-bottom: 16px;">
+                <div>
+                    <div style="font-weight: bold; border-bottom: 1px solid #000; padding-bottom: 2px;">ENGR. ALDWIN JESTER A. ANCAYAN</div>
+                    <div style="font-size: 10px; color: #333;">BAC CHAIRMAN/MUN. ENGINEER</div>
+                </div>
+                <div>
+                    <div style="font-weight: bold; border-bottom: 1px solid #000; padding-bottom: 2px;">CHERRYL I. ESQUILLO</div>
+                    <div style="font-size: 10px; color: #333;">BAC VICE-CHAIRMAN/MUN. BUDGET OFFICER</div>
+                </div>
+            </div>
+            
+            <div style="display: flex; justify-content: space-around; text-align: center; font-size: 11px; margin-bottom: 16px;">
+                <div>
+                    <div style="font-weight: bold; border-bottom: 1px solid #000; padding-bottom: 2px;">REGINO S. REYES</div>
+                    <div style="font-size: 10px; color: #333;">BAC MEMBER/MUN. AGRICULTURIST</div>
+                </div>
+                <div>
+                    <div style="font-weight: bold; border-bottom: 1px solid #000; padding-bottom: 2px;">GERARDO Z. RIELO JR.</div>
+                    <div style="font-size: 10px; color: #333;">BAC MEMBER/MDRRMO</div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; font-size: 11px;">
+                <div style="font-weight: bold; border-bottom: 1px solid #000; display: inline-block; padding-bottom: 2px;">ENGR. ENP. PERCIVAL M. MALIMBAN</div>
+                <div style="font-size: 10px; color: #333;">BAC MEMBER/MUN. PLANNING & DEV’T COORDINATOR</div>
+            </div>
+        </div>
+        
+        <div style="font-size: 12px; font-weight: bold; color: #1e293b; border-top: 1px dashed #cbd5e1; padding-top: 8px;">
+            {ctx.get('ac_number', '')}
+        </div>
+    </div>
+    """
 
 def render_pdf_to_preview_png(pdf_bytes: bytes) -> bytes:
     """Render the first page of PDF bytes to a crisp, high-DPI PNG image."""
@@ -3467,6 +3600,11 @@ if st.session_state.generated_doc_bytes is not None:
     
     ac_num_display = ctx.get("ac_number", "AC-0001B-10-26")
     
+    if png_b64:
+        paper_card_inner = f'<img id="preview-paper-img" src="data:image/png;base64,{png_b64}" alt="Official Document Preview" class="preview-paper-img" />'
+    else:
+        paper_card_inner = build_html_document_fallback(ctx, logo_b64)
+    
     # -------------------------------------------------------------------------
     # 1. Fullscreen Preview Overlay Modal (Hovers over Main Page)
     # -------------------------------------------------------------------------
@@ -3486,8 +3624,8 @@ if st.session_state.generated_doc_bytes is not None:
 </div>
 </div>
 <div class="preview-sheet-wrapper">
-<div class="preview-paper-card">
-<img src="data:image/png;base64,{png_b64}" alt="Official Document Preview" class="preview-paper-img" />
+<div class="preview-paper-card" id="paper-card-root">
+{paper_card_inner}
 </div>
 </div>
 <div id="another-prompt-modal" class="prompt-modal-backdrop">
@@ -3583,14 +3721,13 @@ if st.session_state.generated_doc_bytes is not None:
     st.markdown("<div style='height: 12px;'></div>", unsafe_allow_html=True)
 
     # In-page 1:1 paper document view
-    if png_b64:
-        st.markdown(f"""
-        <div style="display: flex; justify-content: center; align-items: flex-start; width: 100%; padding: 10px 0 30px 0;">
-            <div style="width: 100%; max-width: 820px; background: #ffffff; border-radius: 4px; box-shadow: 0 14px 44px rgba(0, 0, 0, 0.7), 0 2px 10px rgba(0, 0, 0, 0.45); overflow: hidden; border: 1px solid rgba(148, 163, 184, 0.35);">
-                <img src="data:image/png;base64,{png_b64}" alt="Official Document Preview" style="width: 100%; height: auto; display: block; object-fit: contain; pointer-events: none; user-select: none;" />
-            </div>
+    st.markdown(f"""
+    <div style="display: flex; justify-content: center; align-items: flex-start; width: 100%; padding: 10px 0 30px 0;">
+        <div style="width: 100%; max-width: 820px; background: #ffffff; border-radius: 4px; box-shadow: 0 14px 44px rgba(0, 0, 0, 0.7), 0 2px 10px rgba(0, 0, 0, 0.45); overflow: hidden; border: 1px solid rgba(148, 163, 184, 0.35);">
+            {paper_card_inner}
         </div>
-        """, unsafe_allow_html=True)
+    </div>
+    """, unsafe_allow_html=True)
 
     # Companion script to manage overlay dialog, print, and generate-another prompts
     components.html(f"""
@@ -3733,11 +3870,20 @@ if st.session_state.generated_doc_bytes is not None:
                                 </style>
                             </head>
                             <body>
-                                <img id="print-image" src="data:image/png;base64,{png_b64}" />
+                                <div id="print-body-content"></div>
                             </body>
                             </html>
                         `);
                         frameDoc.close();
+
+                        const printBodyContainer = frameDoc.getElementById('print-body-content');
+                        const hasPng = "{png_b64}".length > 10;
+                        if (hasPng) {{
+                            printBodyContainer.innerHTML = '<img id="print-image" src="data:image/png;base64,{png_b64}" />';
+                        }} else {{
+                            const paperElem = pDoc.getElementById('paper-card-root');
+                            printBodyContainer.innerHTML = paperElem ? paperElem.innerHTML : '';
+                        }}
 
                         const pImg = frameDoc.getElementById('print-image');
                         function doPrint() {{
@@ -3755,12 +3901,16 @@ if st.session_state.generated_doc_bytes is not None:
                             setTimeout(showPrompt, 2500);
                         }}
 
-                        if (pImg.complete) {{
-                            setTimeout(doPrint, 150);
-                        }} else {{
-                            pImg.onload = function() {{
+                        if (pImg) {{
+                            if (pImg.complete) {{
                                 setTimeout(doPrint, 150);
-                            }};
+                            }} else {{
+                                pImg.onload = function() {{
+                                    setTimeout(doPrint, 150);
+                                }};
+                            }}
+                        }} else {{
+                            setTimeout(doPrint, 200);
                         }}
                     }} catch(err) {{
                         console.error('runDirectPrint error:', err);
