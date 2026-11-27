@@ -12,6 +12,7 @@ import json
 from PIL import Image
 from docxtpl import DocxTemplate
 import docx
+import pandas as pd
 
 # -----------------------------------------------------------------------------
 # Asset Loader & Base64 Caching
@@ -2626,8 +2627,141 @@ def clear_all_history_txt():
     except Exception as e:
         print("Error clearing canvass_history.txt:", e)
 
-# Always load the persistent history from canvass_history.txt on every page run
-st.session_state.abstract_history = read_all_history_from_txt()
+# -----------------------------------------------------------------------------
+# Google Sheets Cloud Sync Layer (Multi-User Persistence)
+# -----------------------------------------------------------------------------
+HISTORY_COLUMNS = [
+    "record_id", "ac_number", "ac_code", "ac_month", "ac_year",
+    "rfq_closing_date", "opened_date", "winning_bidder", "winning_location",
+    "winning_amount", "purpose_desc", "include_lgu_suffix", "purpose",
+    "b1_name", "b1_loc", "b1_amt", "b2_name", "b2_loc", "b2_amt",
+    "b3_name", "b3_loc", "b3_amt", "time_str", "data_json"
+]
+
+def get_gsheets_connection():
+    """Attempt to get an active GSheetsConnection if configured in st.secrets."""
+    try:
+        if "connections" in st.secrets and "gsheets" in st.secrets["connections"]:
+            from streamlit_gsheets import GSheetsConnection
+            return st.connection("gsheets", type=GSheetsConnection)
+        if "gsheets" in st.secrets:
+            from streamlit_gsheets import GSheetsConnection
+            return st.connection("gsheets", type=GSheetsConnection)
+    except Exception:
+        pass
+    return None
+
+def read_all_history() -> list:
+    """Read history from Google Sheets if configured, otherwise fallback to canvass_history.txt."""
+    conn = get_gsheets_connection()
+    if conn is not None:
+        try:
+            df = conn.read(ttl=0)
+            if df is not None and not df.empty:
+                records = []
+                for _, row in df.iterrows():
+                    entry = {}
+                    data_json_val = str(row.get("data_json", "")).strip()
+                    if data_json_val and data_json_val.startswith("{"):
+                        try:
+                            entry = json.loads(data_json_val)
+                        except Exception:
+                            entry = {}
+                    for col in HISTORY_COLUMNS:
+                        if col in row and pd.notna(row[col]) and col not in entry:
+                            val = row[col]
+                            if col == "include_lgu_suffix":
+                                val = str(val).lower() in ("true", "1", "yes")
+                            entry[col] = val
+                    if entry.get("ac_number") or entry.get("record_id"):
+                        records.append(entry)
+                if records:
+                    return list(reversed(records))
+        except Exception as e:
+            print("Google Sheets read failed, falling back to local txt:", repr(e))
+
+    return read_all_history_from_txt()
+
+def write_single_entry(entry: dict):
+    """Write entry to Google Sheets (if configured) AND local canvass_history.txt."""
+    write_single_entry_to_txt(entry)
+    conn = get_gsheets_connection()
+    if conn is not None:
+        try:
+            payload_dict = {}
+            for k, v in entry.items():
+                if isinstance(v, (datetime.date, datetime.datetime)):
+                    payload_dict[k] = v.isoformat()
+                elif k != "doc_bytes":
+                    payload_dict[k] = v
+            payload_json = json.dumps(payload_dict, ensure_ascii=False)
+            
+            row_dict = {
+                "record_id": entry.get("record_id", ""),
+                "ac_number": entry.get("ac_number", ""),
+                "ac_code": entry.get("ac_code", ""),
+                "ac_month": entry.get("ac_month", ""),
+                "ac_year": entry.get("ac_year", ""),
+                "rfq_closing_date": str(entry.get("rfq_closing_date", "")),
+                "opened_date": entry.get("opened_date", ""),
+                "winning_bidder": entry.get("winning_bidder", ""),
+                "winning_location": entry.get("winning_location", ""),
+                "winning_amount": entry.get("winning_amount", ""),
+                "purpose_desc": entry.get("purpose_desc", ""),
+                "include_lgu_suffix": bool(entry.get("include_lgu_suffix", True)),
+                "purpose": entry.get("purpose", ""),
+                "b1_name": entry.get("b1_name", ""),
+                "b1_loc": entry.get("b1_loc", ""),
+                "b1_amt": entry.get("b1_amt", ""),
+                "b2_name": entry.get("b2_name", ""),
+                "b2_loc": entry.get("b2_loc", ""),
+                "b2_amt": entry.get("b2_amt", ""),
+                "b3_name": entry.get("b3_name", ""),
+                "b3_loc": entry.get("b3_loc", ""),
+                "b3_amt": entry.get("b3_amt", ""),
+                "time_str": entry.get("time_str", ""),
+                "data_json": payload_json
+            }
+            
+            try:
+                curr_df = conn.read(ttl=0)
+            except Exception:
+                curr_df = pd.DataFrame(columns=HISTORY_COLUMNS)
+                
+            if curr_df is None or curr_df.empty:
+                curr_df = pd.DataFrame(columns=HISTORY_COLUMNS)
+                
+            new_df = pd.concat([curr_df, pd.DataFrame([row_dict])], ignore_index=True)
+            conn.update(data=new_df)
+        except Exception as e:
+            print("Google Sheets append failed:", repr(e))
+
+def delete_entry(record_id: str):
+    """Delete entry from Google Sheets (if configured) AND local canvass_history.txt."""
+    delete_entry_from_txt(record_id)
+    conn = get_gsheets_connection()
+    if conn is not None:
+        try:
+            curr_df = conn.read(ttl=0)
+            if curr_df is not None and not curr_df.empty and "record_id" in curr_df.columns:
+                filtered_df = curr_df[curr_df["record_id"].astype(str) != str(record_id)]
+                conn.update(data=filtered_df)
+        except Exception as e:
+            print("Google Sheets delete failed:", repr(e))
+
+def clear_all_history():
+    """Clear all entries from Google Sheets (if configured) AND local canvass_history.txt."""
+    clear_all_history_txt()
+    conn = get_gsheets_connection()
+    if conn is not None:
+        try:
+            empty_df = pd.DataFrame(columns=HISTORY_COLUMNS)
+            conn.update(data=empty_df)
+        except Exception as e:
+            print("Google Sheets clear failed:", repr(e))
+
+# Always load the persistent history (Google Sheets if available, else canvass_history.txt)
+st.session_state.abstract_history = read_all_history()
 
 def load_sample_data():
     st.session_state["rfq_closing_date"] = datetime.date(2026, 10, 26)
@@ -2764,7 +2898,7 @@ def auto_arrange_bidders(b1_tuple, b2_tuple, b3_tuple):
 def clear_db_pin_dialog():
     st.markdown("""
     <div style="font-size: 13.5px; color: #f1f5f9; margin-bottom: 14px; line-height: 1.5;">
-        This action will permanently delete all records from <code>canvass_history.txt</code>.<br><br>
+        This action will permanently delete all records from database history.<br><br>
         Please enter the <strong>4-digit Master PIN Code</strong> to proceed:
     </div>
     """, unsafe_allow_html=True)
@@ -2773,7 +2907,7 @@ def clear_db_pin_dialog():
     with col1:
         if st.button("Confirm Clear", type="primary", use_container_width=True):
             if pin.strip() == "2025":
-                clear_all_history_txt()
+                clear_all_history()
                 st.session_state.abstract_history = []
                 st.session_state.history_expanded_ids = set()
                 st.toast("Database history cleared successfully.")
@@ -2788,15 +2922,18 @@ if "history_expanded_ids" not in st.session_state:
     st.session_state.history_expanded_ids = set()
 
 with st.sidebar:
-    st.markdown("<div class='sidebar-heading'>Abstract History (Database)</div>", unsafe_allow_html=True)
+    is_gs = get_gsheets_connection() is not None
+    badge_html = """<span style="background: rgba(16, 185, 129, 0.2); color: #34d399; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 9999px; border: 1px solid rgba(52, 211, 153, 0.4); margin-left: 6px;">🟢 Cloud Sync</span>""" if is_gs else """<span style="background: rgba(148, 163, 184, 0.15); color: #94a3b8; font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 9999px; border: 1px solid rgba(148, 163, 184, 0.3); margin-left: 6px;">⚪ Local DB</span>"""
+    
+    st.markdown(f"<div class='sidebar-heading' style='display: flex; align-items: center; justify-content: space-between;'><span>Abstract History</span>{badge_html}</div>", unsafe_allow_html=True)
     
     col_h_clear, col_h_ref = st.columns([1, 1])
     with col_h_clear:
-        if st.button("Clear DB", key="btn_clear_db", use_container_width=True, help="Clear all records from canvass_history.txt (Requires Master PIN)"):
+        if st.button("Clear DB", key="btn_clear_db", use_container_width=True, help="Clear all records from database (Requires Master PIN)"):
             clear_db_pin_dialog()
     with col_h_ref:
-        if st.button("Refresh", key="btn_ref_db", use_container_width=True, help="Reload records from canvass_history.txt"):
-            st.session_state.abstract_history = read_all_history_from_txt()
+        if st.button("Refresh", key="btn_ref_db", use_container_width=True, help="Reload records from database"):
+            st.session_state.abstract_history = read_all_history()
             st.toast("History refreshed from database.")
             st.rerun()
             
@@ -2896,8 +3033,8 @@ with st.sidebar:
                         st.rerun()
                 with h_c2:
                     if st.button("Delete", key=f"hist_del_{rec_id}_{idx}", use_container_width=True, help="Delete this record from database"):
-                        delete_entry_from_txt(rec_id)
-                        st.session_state.abstract_history = read_all_history_from_txt()
+                        delete_entry(rec_id)
+                        st.session_state.abstract_history = read_all_history()
                         st.session_state.history_expanded_ids.discard(rec_id)
                         st.toast(f"Deleted {ac_num} from database.")
                         st.rerun()
@@ -3546,13 +3683,13 @@ if generate_clicked:
                 "b3_amt": b3_amt_formatted.strip() if b3_amt_formatted else "",
                 "time_str": now_str
             }
-            write_single_entry_to_txt(history_entry)
-            st.session_state.abstract_history = read_all_history_from_txt()
+            write_single_entry(history_entry)
+            st.session_state.abstract_history = read_all_history()
             st.session_state.history_page = 1
             
             time.sleep(0.55)
             progress_placeholder.empty()
-            st.session_state.abstract_history = read_all_history_from_txt()
+            st.session_state.abstract_history = read_all_history()
             st.session_state.history_page = 1
             st.rerun()
             
