@@ -1525,11 +1525,25 @@ css_rules = f"""
     .preview-paper-card {{
         width: 100% !important;
         max-width: 860px !important;
+        height: 1120px !important;
+        max-height: 85vh !important;
         background: #ffffff !important;
         border-radius: 6px !important;
         box-shadow: 0 16px 50px rgba(0, 0, 0, 0.8), 0 2px 12px rgba(0, 0, 0, 0.5) !important;
         border: 1px solid rgba(148, 163, 184, 0.4) !important;
         overflow: hidden !important;
+        position: relative !important;
+        display: flex !important;
+        flex-direction: column !important;
+    }}
+    
+    .preview-pdf-frame {{
+        width: 100% !important;
+        height: 100% !important;
+        border: none !important;
+        display: block !important;
+        background: #ffffff !important;
+        flex: 1 1 auto !important;
     }}
     
     .preview-paper-img {{
@@ -1550,35 +1564,24 @@ css_rules = f"""
         bottom: 0 !important;
         width: 100vw !important;
         height: 100vh !important;
-        background: rgba(5, 10, 25, 0.85) !important;
+        background: rgba(5, 10, 25, 0.88) !important;
         backdrop-filter: blur(8px) !important;
         -webkit-backdrop-filter: blur(8px) !important;
-        z-index: 99999999 !important;
+        z-index: 999999999 !important;
         display: none !important;
         align-items: center !important;
         justify-content: center !important;
-        overflow: hidden !important;
-        overscroll-behavior: none !important;
-        touch-action: none !important;
+        margin: 0 !important;
+        padding: 16px !important;
+        box-sizing: border-box !important;
         animation: promptFadeIn 0.25s ease-out !important;
     }}
     .prompt-modal-backdrop.is-open {{
         display: flex !important;
-        overflow: hidden !important;
-        overscroll-behavior: none !important;
-        touch-action: none !important;
     }}
     
     .preview-modal-overlay.prompt-active {{
         overflow: hidden !important;
-        overscroll-behavior: none !important;
-        touch-action: none !important;
-    }}
-    
-    html.prompt-active, body.prompt-active {{
-        overflow: hidden !important;
-        overscroll-behavior: none !important;
-        touch-action: none !important;
     }}
     
     @keyframes promptFadeIn {{
@@ -3617,12 +3620,12 @@ if generate_clicked:
             st.session_state.generated_context = context
             st.session_state.generated_ac_number = ac_number_input.strip()
             
-            # Step 3: PDF Generation via Word COM (72%)
+            # Step 3: Fast PDF Generation
             progress_placeholder.markdown(
                 render_generation_progress_card(
-                    pct=72,
-                    status_text="Pre-Generating Official PDF via Word Engine...",
-                    subtitle="Compiling 1:1 vector print layout and official seal",
+                    pct=75,
+                    status_text="Generating Official PDF Layout...",
+                    subtitle="Compiling 1:1 vector document preview and seal",
                     current_step=3
                 ),
                 unsafe_allow_html=True
@@ -3631,26 +3634,12 @@ if generate_clicked:
             pdf_bytes = generate_pdf_from_docx_bytes(doc_bytes)
             st.session_state.generated_pdf_bytes = pdf_bytes
             
-            # Step 4: High-Definition 150-DPI Paper Preview (92%)
-            progress_placeholder.markdown(
-                render_generation_progress_card(
-                    pct=92,
-                    status_text="Rasterizing 150-DPI Document Preview...",
-                    subtitle="Rendering locked 150-DPI paper preview for instant inspection",
-                    current_step=4
-                ),
-                unsafe_allow_html=True
-            )
-            
-            png_bytes = render_pdf_to_preview_png(pdf_bytes)
-            st.session_state.generated_preview_png_bytes = png_bytes
-            
-            # Step 5: Finished & Ready (100%)
+            # Step 4: Finished & Ready
             progress_placeholder.markdown(
                 render_generation_progress_card(
                     pct=100,
                     status_text="Finished! Official Document Ready.",
-                    subtitle="Abstract of Canvass successfully compiled, rendered, and sealed",
+                    subtitle="Abstract of Canvass successfully compiled and sealed",
                     current_step=4,
                     finished=True
                 ),
@@ -3686,11 +3675,7 @@ if generate_clicked:
             write_single_entry(history_entry)
             st.session_state.abstract_history = read_all_history()
             st.session_state.history_page = 1
-            
-            time.sleep(0.55)
             progress_placeholder.empty()
-            st.session_state.abstract_history = read_all_history()
-            st.session_state.history_page = 1
             st.rerun()
             
         except Exception as e:
@@ -3711,28 +3696,20 @@ if st.session_state.generated_doc_bytes is not None:
     doc_b64 = base64.b64encode(doc_bytes).decode("utf-8") if doc_bytes else ""
     
     pdf_bytes = st.session_state.get("generated_pdf_bytes", b"")
+    if not pdf_bytes and doc_bytes:
+        pdf_bytes = generate_pdf_from_docx_bytes(doc_bytes)
+        st.session_state.generated_pdf_bytes = pdf_bytes
     pdf_b64 = base64.b64encode(pdf_bytes).decode("utf-8") if pdf_bytes else ""
-    
-    png_bytes = st.session_state.get("generated_preview_png_bytes", b"")
-    if not png_bytes and pdf_bytes:
-        png_bytes = render_pdf_to_preview_png(pdf_bytes)
-        st.session_state.generated_preview_png_bytes = png_bytes
-    if not png_bytes and doc_bytes:
-        if not pdf_bytes:
-            pdf_bytes = generate_pdf_from_docx_bytes(doc_bytes)
-            st.session_state.generated_pdf_bytes = pdf_bytes
-            pdf_b64 = base64.b64encode(pdf_bytes).decode("utf-8") if pdf_bytes else ""
-        if pdf_bytes:
-            png_bytes = render_pdf_to_preview_png(pdf_bytes)
-            st.session_state.generated_preview_png_bytes = png_bytes
-    png_b64 = base64.b64encode(png_bytes).decode("utf-8") if png_bytes else ""
     
     ac_num_display = ctx.get("ac_number", "AC-0001B-10-26")
     
-    if png_b64:
-        paper_card_inner = f'<img id="preview-paper-img" src="data:image/png;base64,{png_b64}" alt="Official Document Preview" class="preview-paper-img" />'
+    if pdf_b64:
+        paper_card_inner = f'<iframe src="data:application/pdf;base64,{pdf_b64}#toolbar=0&navpanes=0&scrollbar=0&view=FitH" class="preview-pdf-frame" id="preview-pdf-embed" title="Official Document Preview"></iframe>'
     else:
         paper_card_inner = build_html_document_fallback(ctx, logo_b64)
+        
+    print_html_content = build_html_document_fallback(ctx, logo_b64)
+    print_b64 = base64.b64encode(print_html_content.encode("utf-8")).decode("utf-8")
     
     # -------------------------------------------------------------------------
     # 1. Fullscreen Preview Overlay Modal (Hovers over Main Page)
@@ -3757,6 +3734,7 @@ if st.session_state.generated_doc_bytes is not None:
 {paper_card_inner}
 </div>
 </div>
+</div>
 <div id="another-prompt-modal" class="prompt-modal-backdrop">
 <div class="prompt-dialog-box">
 <img src="data:image/png;base64,{thumb_b64}" class="prompt-seal-logo" alt="Maragondon Seal" />
@@ -3765,7 +3743,6 @@ if st.session_state.generated_doc_bytes is not None:
 <div class="prompt-btn-group">
 <button type="button" id="prompt-btn-confirm" class="prompt-btn-primary">Yes, Generate Another</button>
 <button type="button" id="prompt-btn-cancel" class="prompt-btn-secondary">No, Stay on Current Document</button>
-</div>
 </div>
 </div>
 </div>"""
@@ -3851,7 +3828,7 @@ if st.session_state.generated_doc_bytes is not None:
 
     # In-page 1:1 paper document view
     in_page_preview = f"""<div style="display: flex; justify-content: center; align-items: flex-start; width: 100%; padding: 10px 0 30px 0;">
-<div style="width: 100%; max-width: 820px; background: #ffffff; border-radius: 4px; box-shadow: 0 14px 44px rgba(0, 0, 0, 0.7), 0 2px 10px rgba(0, 0, 0, 0.45); overflow: hidden; border: 1px solid rgba(148, 163, 184, 0.35);">
+<div class="preview-paper-card" style="box-shadow: 0 14px 44px rgba(0, 0, 0, 0.7), 0 2px 10px rgba(0, 0, 0, 0.45);">
 {paper_card_inner}
 </div>
 </div>"""
@@ -3882,205 +3859,223 @@ if st.session_state.generated_doc_bytes is not None:
                     printFrame.style.visibility = 'hidden';
                     pDoc.body.appendChild(printFrame);
 
-                    const frameDoc = printFrame.contentWindow.document;
-                    frameDoc.open();
-                    frameDoc.write(`
-                        <!DOCTYPE html>
-                        <html>
-                        <head>
-                            <title>Abstract of Canvass</title>
-                            <style>
-                                @page {{ size: auto; margin: 0mm; }}
-                                @media print {{
-                                    html, body {{ margin: 0 !important; padding: 0 !important; background: #ffffff !important; }}
-                                    img {{ width: 100% !important; max-width: 100% !important; height: auto !important; display: block !important; page-break-inside: avoid !important; }}
-                                }}
-                                html, body {{ margin: 0; padding: 0; background: #ffffff; }}
-                                img {{ width: 100%; height: auto; display: block; }}
-                            </style>
-                        </head>
-                        <body>
-                            <div id="print-body-content"></div>
-                        </body>
-                        </html>
-                    `);
-                    frameDoc.close();
-
-                    const printBodyContainer = frameDoc.getElementById('print-body-content');
-                    const hasPng = "{png_b64}".length > 10;
-                    if (hasPng) {{
-                        printBodyContainer.innerHTML = '<img id="print-image" src="data:image/png;base64,{png_b64}" />';
-                    }} else {{
-                        const paperElem = pDoc.getElementById('paper-card-root');
-                        printBodyContainer.innerHTML = paperElem ? paperElem.innerHTML : '';
+                    function showPromptOnParent() {{
+                        const m = pDoc.getElementById('another-prompt-modal');
+                        if (m) {{
+                            if (m.parentElement !== pDoc.body) pDoc.body.appendChild(m);
+                            m.classList.add('is-open');
+                        }}
+                        const ov = pDoc.getElementById('preview-modal-overlay');
+                        if (ov) ov.classList.add('prompt-active');
                     }}
 
-                    const pImg = frameDoc.getElementById('print-image');
-                    function doPrint() {{
+                    function decodeB64Unicode(str) {{
+                        try {{
+                            return decodeURIComponent(atob(str).split('').map(function(c) {{
+                                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                            }}).join(''));
+                        }} catch(e) {{
+                            try {{
+                                return atob(str);
+                            }} catch(e2) {{
+                                return '';
+                            }}
+                        }}
+                    }}
+                    const printDocHtml = decodeB64Unicode("{print_b64}");
+
+                    const frameDoc = printFrame.contentWindow.document;
+                    frameDoc.open();
+                    frameDoc.write(`<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Abstract of Canvass</title>
+    <style>
+        @page {{
+            size: portrait;
+            margin: 10mm 12mm 10mm 12mm;
+        }}
+        @media print {{
+            html, body {{
+                margin: 0 !important;
+                padding: 0 !important;
+                background: #ffffff !important;
+                color: #000000 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }}
+            .doc-paper-fallback {{
+                box-shadow: none !important;
+                border: none !important;
+                padding: 0 !important;
+                width: 100% !important;
+                max-width: 100% !important;
+            }}
+        }}
+        html, body {{
+            margin: 0;
+            padding: 0;
+            background: #ffffff;
+            color: #000000;
+            font-family: 'Times New Roman', Times, serif;
+        }}
+    </style>
+</head>
+<body>
+    ${{printDocHtml}}
+</body>
+</html>`);
+                    frameDoc.close();
+
+                    setTimeout(function() {{
                         try {{
                             printFrame.contentWindow.focus();
                             printFrame.contentWindow.print();
                         }} catch(e) {{
-                            console.error('Print trigger error:', e);
-                        }}
-                        function showPromptOnParent() {{
-                            const m = pDoc.getElementById('another-prompt-modal');
-                            const ov = pDoc.getElementById('preview-modal-overlay');
-                            if (m) m.classList.add('is-open');
-                            if (ov) ov.classList.add('prompt-active');
+                            console.warn('Iframe print error, falling back to popup window:', e);
                             try {{
-                                pDoc.body.classList.add('prompt-active');
-                                pDoc.documentElement.classList.add('prompt-active');
-                            }} catch(e) {{}}
+                                const pWinPopup = window.open('', '_blank', 'width=900,height=1100');
+                                if (pWinPopup) {{
+                                    pWinPopup.document.write(frameDoc.documentElement.outerHTML);
+                                    pWinPopup.document.close();
+                                    pWinPopup.focus();
+                                    pWinPopup.print();
+                                }}
+                            }} catch(popErr) {{
+                                console.error('All print triggers failed:', popErr);
+                            }}
                         }}
-                        try {{
-                            printFrame.contentWindow.addEventListener('afterprint', function() {{
-                                setTimeout(showPromptOnParent, 600);
-                            }}, {{ once: true }});
-                        }} catch(e) {{}}
-                        setTimeout(showPromptOnParent, 2500);
-                    }}
-
-                    if (pImg) {{
-                        if (pImg.complete) setTimeout(doPrint, 150);
-                        else pImg.onload = function() {{ setTimeout(doPrint, 150); }};
-                    }} else {{
-                        setTimeout(doPrint, 200);
-                    }}
+                        setTimeout(showPromptOnParent, 1200);
+                    }}, 250);
                 }} catch(err) {{
                     console.error('runDirectPrint error:', err);
                 }}
             }};
 
-            // Inject persistent head delegation script if not already present
-            if (!pDoc.getElementById('preview-overlay-delegation-js')) {{
-                const s = pDoc.createElement('script');
-                s.id = 'preview-overlay-delegation-js';
-                s.textContent = `
-                (function() {{
-                    document.addEventListener('click', function(e) {{
-                        // 1. Reopen preview overlay button
-                        const reopen = e.target.closest('#btn-reopen-preview') || e.target.closest('.btn-reopen-preview');
-                        if (reopen) {{
-                            e.preventDefault();
-                            e.stopPropagation();
-                            const ov = document.getElementById('preview-modal-overlay');
-                            if (ov) {{
-                                ov.classList.remove('is-hidden');
-                                ov.scrollTop = 0;
-                            }}
-                            return;
-                        }}
-
-                        // 2. Close overlay button
-                        const closeBtn = e.target.closest('#overlay-close-btn') || e.target.closest('.btn-overlay-close');
-                        if (closeBtn) {{
-                            e.preventDefault();
-                            e.stopPropagation();
-                            const ov = document.getElementById('preview-modal-overlay');
-                            if (ov) ov.classList.add('is-hidden');
-                            return;
-                        }}
-
-                        // 3. Print button in overlay
-                        const printBtn = e.target.closest('#overlay-print-btn') || e.target.closest('.btn-overlay-print');
-                        if (printBtn) {{
-                            e.preventDefault();
-                            e.stopPropagation();
-                            if (window.runDirectPrint) window.runDirectPrint();
-                            return;
-                        }}
-
-                        // 4. Download button in overlay
-                        const dlBtn = e.target.closest('#overlay-dl-btn');
-                        if (dlBtn) {{
-                            const ov = document.getElementById('preview-modal-overlay');
-                            if (ov) ov.classList.add('prompt-active');
-                            try {{
-                                document.body.classList.add('prompt-active');
-                                document.documentElement.classList.add('prompt-active');
-                            }} catch(err) {{}}
-                            const m = document.getElementById('another-prompt-modal');
-                            if (m) m.classList.add('is-open');
-                        }}
-
-                        // 5. Cancel button in "Generate Another?" modal
-                        const cancelBtn = e.target.closest('#prompt-btn-cancel');
-                        if (cancelBtn) {{
-                            e.preventDefault();
-                            e.stopPropagation();
-                            const m = document.getElementById('another-prompt-modal');
-                            if (m) m.classList.remove('is-open');
-                            const ov = document.getElementById('preview-modal-overlay');
-                            if (ov) ov.classList.remove('prompt-active');
-                            try {{
-                                document.body.classList.remove('prompt-active');
-                                document.documentElement.classList.remove('prompt-active');
-                            }} catch(err) {{}}
-                            return;
-                        }}
-
-                        // 6. Confirm button in "Generate Another?" modal
-                        const confirmBtn = e.target.closest('#prompt-btn-confirm');
-                        if (confirmBtn) {{
-                            e.preventDefault();
-                            e.stopPropagation();
-                            const m = document.getElementById('another-prompt-modal');
-                            if (m) m.classList.remove('is-open');
-                            const ov = document.getElementById('preview-modal-overlay');
-                            if (ov) {{
-                                ov.classList.remove('prompt-active');
-                                ov.classList.add('is-hidden');
-                            }}
-                            try {{
-                                document.body.classList.remove('prompt-active');
-                                document.documentElement.classList.remove('prompt-active');
-                            }} catch(err) {{}}
-                            try {{
-                                const buttons = Array.from(document.querySelectorAll('button'));
-                                const clearBtn = buttons.find(b => (b.innerText || b.textContent || '').includes('Clear Form'));
-                                if (clearBtn) clearBtn.click();
-                            }} catch(err) {{}}
-                            try {{
-                                window.scrollTo({{ top: 0, behavior: 'smooth' }});
-                            }} catch(err) {{}}
-                            return;
-                        }}
-                    }}, true);
-
-                    // Prevent wheel/touch bubbling when prompt is open
-                    const stopScroll = function(e) {{
-                        const m = document.getElementById('another-prompt-modal');
-                        const ov = document.getElementById('preview-modal-overlay');
-                        if ((m && m.classList.contains('is-open')) || (ov && ov.classList.contains('prompt-active'))) {{
-                            const withinModal = e.target && e.target.closest && e.target.closest('.prompt-dialog-box');
-                            if (!withinModal) {{
-                                e.preventDefault();
-                                e.stopPropagation();
-                                return false;
-                            }}
-                        }}
-                    }};
-                    document.addEventListener('wheel', stopScroll, {{ passive: false }});
-                    document.addEventListener('touchmove', stopScroll, {{ passive: false }});
-                }})();
-                `;
-                pDoc.head.appendChild(s);
+            // Ensure prompt modal is mounted directly under document.body so it is always 100% centered in viewport
+            const modalEl = pDoc.getElementById('another-prompt-modal');
+            if (modalEl && modalEl.parentElement !== pDoc.body) {{
+                pDoc.body.appendChild(modalEl);
             }}
+
+            // Always update persistent head delegation script
+            let s = pDoc.getElementById('preview-overlay-delegation-js');
+            if (s) s.remove();
+            s = pDoc.createElement('script');
+            s.id = 'preview-overlay-delegation-js';
+            s.textContent = `
+            (function() {{
+                function unlockScroll() {{
+                    try {{
+                        document.body.classList.remove('prompt-active');
+                        document.documentElement.classList.remove('prompt-active');
+                        document.body.style.overflow = '';
+                        document.documentElement.style.overflow = '';
+                        const ov = document.getElementById('preview-modal-overlay');
+                        if (ov) ov.classList.remove('prompt-active');
+                    }} catch(e) {{}}
+                }}
+
+                document.addEventListener('click', function(e) {{
+                    // 1. Reopen preview overlay button
+                    const reopen = e.target.closest('#btn-reopen-preview') || e.target.closest('.btn-reopen-preview');
+                    if (reopen) {{
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const ov = document.getElementById('preview-modal-overlay');
+                        if (ov) {{
+                            ov.classList.remove('is-hidden');
+                            ov.scrollTop = 0;
+                        }}
+                        return;
+                    }}
+
+                    // 2. Close overlay button - fully hide and unlock scrolling
+                    const closeBtn = e.target.closest('#overlay-close-btn') || e.target.closest('.btn-overlay-close');
+                    if (closeBtn) {{
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const ov = document.getElementById('preview-modal-overlay');
+                        if (ov) ov.classList.add('is-hidden');
+                        const m = document.getElementById('another-prompt-modal');
+                        if (m) m.classList.remove('is-open');
+                        unlockScroll();
+                        return;
+                    }}
+
+                    // 3. Print button in overlay
+                    const printBtn = e.target.closest('#overlay-print-btn') || e.target.closest('.btn-overlay-print');
+                    if (printBtn) {{
+                        e.preventDefault();
+                        e.stopPropagation();
+                        if (window.runDirectPrint) window.runDirectPrint();
+                        return;
+                    }}
+
+                    // 4. Download button in overlay
+                    const dlBtn = e.target.closest('#overlay-dl-btn');
+                    if (dlBtn) {{
+                        const m = document.getElementById('another-prompt-modal');
+                        if (m) {{
+                            if (m.parentElement !== document.body) document.body.appendChild(m);
+                            m.classList.add('is-open');
+                        }}
+                        const ov = document.getElementById('preview-modal-overlay');
+                        if (ov) ov.classList.add('prompt-active');
+                    }}
+
+                    // 5. Cancel button in "Generate Another?" modal
+                    const cancelBtn = e.target.closest('#prompt-btn-cancel');
+                    if (cancelBtn) {{
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const m = document.getElementById('another-prompt-modal');
+                        if (m) m.classList.remove('is-open');
+                        unlockScroll();
+                        return;
+                    }}
+
+                    // 6. Confirm button in "Generate Another?" modal
+                    const confirmBtn = e.target.closest('#prompt-btn-confirm');
+                    if (confirmBtn) {{
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const m = document.getElementById('another-prompt-modal');
+                        if (m) m.classList.remove('is-open');
+                        const ov = document.getElementById('preview-modal-overlay');
+                        if (ov) {{
+                            ov.classList.remove('prompt-active');
+                            ov.classList.add('is-hidden');
+                        }}
+                        unlockScroll();
+                        try {{
+                            const buttons = Array.from(document.querySelectorAll('button'));
+                            const clearBtn = buttons.find(b => (b.innerText || b.textContent || '').includes('Clear Form'));
+                            if (clearBtn) clearBtn.click();
+                        }} catch(err) {{}}
+                        try {{
+                            window.scrollTo({{ top: 0, behavior: 'smooth' }});
+                        }} catch(err) {{}}
+                        return;
+                    }}
+                }}, true);
+            }})();
+            `;
+            pDoc.head.appendChild(s);
 
             // Also attach listener to download button in page
             const dlBtn = pDoc.querySelector('[data-testid="stDownloadButton"] button');
             if (dlBtn && !dlBtn.__promptBound) {{
                 dlBtn.__promptBound = true;
                 dlBtn.addEventListener('click', function() {{
+                    const m = pDoc.getElementById('another-prompt-modal');
+                    if (m) {{
+                        if (m.parentElement !== pDoc.body) pDoc.body.appendChild(m);
+                        m.classList.add('is-open');
+                    }}
                     const ov = pDoc.getElementById('preview-modal-overlay');
                     if (ov) ov.classList.add('prompt-active');
-                    try {{
-                        pDoc.body.classList.add('prompt-active');
-                        pDoc.documentElement.classList.add('prompt-active');
-                    }} catch(e) {{}}
-                    const m = pDoc.getElementById('another-prompt-modal');
-                    if (m) m.classList.add('is-open');
                 }});
             }}
         }} catch(e) {{
