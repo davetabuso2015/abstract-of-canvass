@@ -4,7 +4,7 @@ A local web application built with **Python**, **Streamlit**, and **docxtpl** fo
 
 ---
 
-## 🚀 Quick Start
+##  Quick Start
 
 ### 1. Launch with One Click (Windows)
 Double-click `run_app.bat` in this folder.
@@ -17,7 +17,7 @@ Then open your web browser at `http://localhost:8501`.
 
 ---
 
-## 🛠 Features
+## Features
 
 1. **Clean Web Form UI**:
    - **Abstract Number**: Text input (e.g. `AC –0433H-10-26`).
@@ -50,7 +50,7 @@ Then open your web browser at `http://localhost:8501`.
 
 ---
 
-## 📦 Requirements
+## Requirements
 - Python 3.10+
 - `streamlit`
 - `docxtpl`
