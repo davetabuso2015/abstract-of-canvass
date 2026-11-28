@@ -1525,34 +1525,229 @@ css_rules = f"""
     .preview-paper-card {{
         width: 100% !important;
         max-width: 860px !important;
-        height: 1120px !important;
+        height: auto !important;
         max-height: 85vh !important;
         background: #ffffff !important;
         border-radius: 6px !important;
         box-shadow: 0 16px 50px rgba(0, 0, 0, 0.8), 0 2px 12px rgba(0, 0, 0, 0.5) !important;
         border: 1px solid rgba(148, 163, 184, 0.4) !important;
-        overflow: hidden !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
         position: relative !important;
-        display: flex !important;
-        flex-direction: column !important;
+        display: block !important;
+        box-sizing: border-box !important;
     }}
     
-    .preview-pdf-frame {{
-        width: 100% !important;
-        height: 100% !important;
-        border: none !important;
-        display: block !important;
+    .doc-paper-fallback,
+    .doc-paper-fallback *,
+    .doc-header-wrap,
+    .doc-header-wrap *,
+    .doc-header-titles,
+    .doc-header-titles *,
+    .doc-mun-title,
+    .doc-main-title,
+    .doc-purpose-text,
+    .doc-opened-date,
+    .doc-opened-date *,
+    .doc-bidders-table,
+    .doc-bidders-table *,
+    .th-bidders,
+    .th-amount,
+    .td-bidders,
+    .td-bidders *,
+    .bidder-item-name,
+    .bidder-item-loc,
+    .td-amount,
+    .doc-committee-section,
+    .doc-committee-section *,
+    .doc-committee-heading,
+    .doc-sig-center,
+    .doc-sig-center *,
+    .doc-sig-name,
+    .doc-sig-role,
+    .doc-sig-row,
+    .doc-sig-row *,
+    .doc-sig-col,
+    .doc-award-clause,
+    .doc-award-clause *,
+    .doc-ac-footer {{
+        font-family: 'Times New Roman', Times, Georgia, serif !important;
+    }}
+    
+    .doc-paper-fallback {{
         background: #ffffff !important;
-        flex: 1 1 auto !important;
+        color: #000000 !important;
+        font-family: 'Times New Roman', Times, Georgia, serif !important;
+        width: 100% !important;
+        max-width: 820px !important;
+        min-height: 1050px !important;
+        margin: 0 auto !important;
+        padding: 55px 65px 45px 65px !important;
+        box-sizing: border-box !important;
+        line-height: 1.35 !important;
+        font-size: 14px !important;
+        position: relative !important;
     }}
     
-    .preview-paper-img {{
-        width: 100% !important;
-        height: auto !important;
-        display: block !important;
+    .doc-header-wrap {{
+        position: relative !important;
+        min-height: 85px !important;
+        margin-bottom: 22px !important;
+    }}
+    
+    .doc-header-seal {{
+        position: absolute !important;
+        left: 4px !important;
+        top: -4px !important;
+        width: 84px !important;
+        height: 84px !important;
         object-fit: contain !important;
-        pointer-events: none !important;
-        user-select: none !important;
+    }}
+    
+    .doc-header-titles {{
+        text-align: center !important;
+        font-size: 14px !important;
+        line-height: 1.35 !important;
+    }}
+    
+    .doc-mun-title {{
+        font-size: 14.5px !important;
+        font-weight: 700 !important;
+        letter-spacing: 0.3px !important;
+    }}
+    
+    .doc-main-title {{
+        text-align: center !important;
+        font-size: 14.5px !important;
+        font-weight: 700 !important;
+        letter-spacing: 0.8px !important;
+        margin-bottom: 22px !important;
+    }}
+    
+    .doc-purpose-text {{
+        font-size: 13.5px !important;
+        line-height: 1.45 !important;
+        text-align: justify !important;
+        margin-bottom: 22px !important;
+    }}
+    
+    .doc-opened-date {{
+        text-align: right !important;
+        font-size: 13.5px !important;
+        line-height: 1.4 !important;
+        margin-bottom: 26px !important;
+        margin-right: 14px !important;
+    }}
+    
+    .doc-bidders-table {{
+        width: 100% !important;
+        border-collapse: collapse !important;
+        border: none !important;
+        margin-bottom: 34px !important;
+        font-size: 13.5px !important;
+    }}
+    
+    .doc-bidders-table th,
+    .doc-bidders-table td {{
+        border: none !important;
+        background: transparent !important;
+    }}
+    
+    .th-bidders {{
+        text-align: left !important;
+        font-weight: 700 !important;
+        font-size: 14px !important;
+        padding: 0 0 10px 0 !important;
+        width: 66% !important;
+    }}
+    
+    .th-amount {{
+        text-align: right !important;
+        font-weight: 700 !important;
+        font-size: 14px !important;
+        padding: 0 20px 10px 0 !important;
+        width: 34% !important;
+    }}
+    
+    .td-bidders {{
+        padding: 7px 0 !important;
+        vertical-align: top !important;
+    }}
+    
+    .bidder-item-name {{
+        font-weight: 700 !important;
+        font-size: 13.5px !important;
+    }}
+    
+    .bidder-item-loc {{
+        padding-left: 20px !important;
+        font-size: 13px !important;
+        color: #111111 !important;
+    }}
+    
+    .td-amount {{
+        padding: 7px 20px 7px 0 !important;
+        text-align: right !important;
+        vertical-align: top !important;
+        font-weight: 700 !important;
+        font-size: 13.5px !important;
+    }}
+    
+    .doc-committee-section {{
+        margin-top: 20px !important;
+        margin-bottom: 32px !important;
+    }}
+    
+    .doc-committee-heading {{
+        text-align: center !important;
+        font-size: 14px !important;
+        font-weight: 700 !important;
+        letter-spacing: 0.5px !important;
+        margin-bottom: 26px !important;
+    }}
+    
+    .doc-sig-center {{
+        text-align: center !important;
+        margin-bottom: 24px !important;
+    }}
+    
+    .doc-sig-name {{
+        font-size: 13.5px !important;
+        font-weight: 700 !important;
+        letter-spacing: 0.2px !important;
+    }}
+    
+    .doc-sig-role {{
+        font-size: 12px !important;
+        color: #222222 !important;
+        margin-top: 2px !important;
+    }}
+    
+    .doc-sig-row {{
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: flex-start !important;
+        margin-bottom: 24px !important;
+        padding: 0 10px !important;
+    }}
+    
+    .doc-sig-col {{
+        text-align: center !important;
+        width: 46% !important;
+    }}
+    
+    .doc-award-clause {{
+        font-size: 13.5px !important;
+        line-height: 1.45 !important;
+        text-align: justify !important;
+        margin-bottom: 28px !important;
+        padding: 0 2px !important;
+    }}
+    
+    .doc-ac-footer {{
+        font-size: 13.5px !important;
+        font-weight: 500 !important;
+        margin-top: 14px !important;
     }}
     
     /* Prompt Modal: Ask User to Generate Another One */
@@ -2215,101 +2410,11 @@ def clean_purpose_description(text: str) -> str:
     return cleaned.strip(" ,.-")
 
 def generate_pdf_from_docx_bytes(docx_bytes: bytes) -> bytes:
-    """Convert generated docx bytes to PDF bytes using LibreOffice (Linux/Cloud) or Word COM (Windows)."""
-    if not docx_bytes:
-        return b""
-    import tempfile, time, subprocess, shutil, sys
-    with tempfile.TemporaryDirectory() as tmp_dir:
-        tmp_docx = os.path.join(tmp_dir, "document.docx")
-        tmp_pdf = os.path.join(tmp_dir, "document.pdf")
-        with open(tmp_docx, "wb") as f:
-            f.write(docx_bytes)
-        
-        # 1. Try LibreOffice / soffice (Standard on Linux & Streamlit Cloud)
-        soffice_bin = shutil.which("libreoffice") or shutil.which("soffice")
-        if soffice_bin:
-            try:
-                env = os.environ.copy()
-                env["HOME"] = tmp_dir
-                profile_dir = os.path.join(tmp_dir, "lo_profile")
-                os.makedirs(profile_dir, exist_ok=True)
-                profile_uri = "file:///" + profile_dir.replace("\\", "/").lstrip("/")
-                cmd = [
-                    soffice_bin,
-                    "--headless",
-                    "--invisible",
-                    "--nologo",
-                    "--nodefault",
-                    "--nofirststartwizard",
-                    "--norestore",
-                    f"-env:UserInstallation={profile_uri}",
-                    "--convert-to", "pdf",
-                    "--outdir", tmp_dir,
-                    os.path.abspath(tmp_docx)
-                ]
-                proc = subprocess.run(cmd, env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=40)
-                if proc.returncode != 0:
-                    print("LibreOffice error:", proc.stderr.decode("utf-8", errors="ignore"))
-                for _ in range(25):
-                    if os.path.exists(tmp_pdf) and os.path.getsize(tmp_pdf) > 0:
-                        break
-                    time.sleep(0.1)
-                if os.path.exists(tmp_pdf) and os.path.getsize(tmp_pdf) > 0:
-                    with open(tmp_pdf, "rb") as f:
-                        return f.read()
-            except Exception as e:
-                print("LibreOffice conversion failed:", repr(e))
-
-        # 2. Try Windows MS Word COM (on local Windows)
-        if sys.platform == "win32":
-            try:
-                import win32com.client
-                import pythoncom
-                pythoncom.CoInitialize()
-                word = None
-                doc = None
-                try:
-                    try:
-                        word = win32com.client.DispatchEx("Word.Application")
-                    except Exception:
-                        word = win32com.client.Dispatch("Word.Application")
-                    word.Visible = False
-                    word.DisplayAlerts = False
-                    doc = word.Documents.Open(os.path.abspath(tmp_docx), ReadOnly=True)
-                    try:
-                        doc.SaveAs2(os.path.abspath(tmp_pdf), FileFormat=17)
-                    except Exception:
-                        doc.SaveAs(os.path.abspath(tmp_pdf), FileFormat=17)
-                    doc.Close(False)
-                    doc = None
-                finally:
-                    if doc:
-                        try:
-                            doc.Close(False)
-                        except Exception:
-                            pass
-                    if word:
-                        try:
-                            word.Quit()
-                        except Exception:
-                            pass
-                    pythoncom.CoUninitialize()
-                
-                for _ in range(20):
-                    if os.path.exists(tmp_pdf) and os.path.getsize(tmp_pdf) > 0:
-                        break
-                    time.sleep(0.1)
-                    
-                if os.path.exists(tmp_pdf) and os.path.getsize(tmp_pdf) > 0:
-                    with open(tmp_pdf, "rb") as f:
-                        return f.read()
-            except Exception as e:
-                print("Windows Word COM conversion failed:", repr(e))
-            
+    """PDF conversion bypassed for maximum generation speed. System uses 1:1 official HTML document preview and direct printing."""
     return b""
 
 def build_html_document_fallback(ctx: dict, logo_b64: str) -> str:
-    """Build a 1:1 crisp HTML paper document layout fallback when PDF conversion is unavailable."""
+    """Build a 1:1 crisp HTML paper document layout matching the official template exactly (pure Times New Roman)."""
     if not ctx:
         return ""
     b1_name = ctx.get("bidder_1_name", "")
@@ -2323,77 +2428,91 @@ def build_html_document_fallback(ctx: dict, logo_b64: str) -> str:
     b3_amt = ctx.get("bidder_3_amount", "")
     winner_name = ctx.get("winning_bidder_name", b1_name)
     winner_loc = ctx.get("winning_bidder_location", b1_loc)
-    logo_tag = f'<img src="data:image/png;base64,{logo_b64}" style="width: 72px; height: 72px; object-fit: contain; margin-bottom: 4px;" alt="Seal" />' if logo_b64 else ''
-    
-    html = f"""<div class="doc-paper-fallback" style="background:#ffffff;color:#000000;font-family:'Times New Roman',Times,serif;padding:36px 42px;box-sizing:border-box;width:100%;max-width:820px;margin:0 auto;line-height:1.35;box-shadow:0 4px 20px rgba(0,0,0,0.5);border-radius:2px;">
-<div style="text-align:center;margin-bottom:14px;">
-{logo_tag}
-<div style="font-size:13px;">Republic of the Philippines</div>
-<div style="font-size:13px;">Province of Cavite</div>
-<div style="font-size:14px;font-weight:bold;letter-spacing:0.5px;">MUNICIPALITY OF MARAGONDON</div>
-<div style="font-size:17px;font-weight:bold;margin-top:14px;text-decoration:underline;letter-spacing:1px;">ABSTRACT OF CANVASS</div>
+    ac_number = ctx.get("ac_number", "")
+    purpose = ctx.get("purpose", "")
+    opened_date = ctx.get("opened_date", "")
+
+    seal_tag = f'<img src="data:image/png;base64,{logo_b64}" class="doc-header-seal" alt="Seal" />' if logo_b64 else ''
+
+    html = f"""<div class="doc-paper-fallback" style="font-family:'Times New Roman',Times,serif !important;">
+<div class="doc-header-wrap" style="font-family:'Times New Roman',Times,serif !important;">
+{seal_tag}
+<div class="doc-header-titles" style="font-family:'Times New Roman',Times,serif !important;">
+<div style="font-family:'Times New Roman',Times,serif !important;">Republic of the Philippines</div>
+<div style="font-family:'Times New Roman',Times,serif !important;">Province of Cavite</div>
+<div class="doc-mun-title" style="font-family:'Times New Roman',Times,serif !important;">MUNICIPALITY OF MARAGONDON</div>
 </div>
-<div style="font-size:13px;margin-bottom:12px;font-weight:bold;">FOR: PAYMENT FOR THE {ctx.get('purpose', '')}</div>
-<div style="text-align:right;font-size:12.5px;margin-bottom:16px;line-height:1.4;">
-<div>Opened at the Office of the Municipal</div>
-<div>Mayor on <u>{ctx.get('opened_date', '')}</u></div>
 </div>
-<table style="width:100%;border-collapse:collapse;border:1.5px solid #000000;margin-bottom:18px;font-size:12.5px;">
+<div class="doc-main-title" style="font-family:'Times New Roman',Times,serif !important;">ABSTRACT OF CANVASS</div>
+<div class="doc-purpose-text" style="font-family:'Times New Roman',Times,serif !important;">FOR: PAYMENT FOR THE {purpose}</div>
+<div class="doc-opened-date" style="font-family:'Times New Roman',Times,serif !important;">
+<div style="font-family:'Times New Roman',Times,serif !important;">Opened at the Office of the Municipal</div>
+<div style="font-family:'Times New Roman',Times,serif !important;">Mayor on {opened_date}</div>
+</div>
+<table class="doc-bidders-table" style="font-family:'Times New Roman',Times,serif !important;">
 <thead>
-<tr style="background:#f8fafc;font-weight:bold;text-align:center;">
-<th style="border:1px solid #000000;padding:8px 10px;width:62%;">NAME OF BIDDERS</th>
-<th style="border:1px solid #000000;padding:8px 10px;width:38%;">AMOUNT OF BID</th>
+<tr style="font-family:'Times New Roman',Times,serif !important;">
+<th class="th-bidders" style="font-family:'Times New Roman',Times,serif !important;">NAME OF BIDDERS</th>
+<th class="th-amount" style="font-family:'Times New Roman',Times,serif !important;">AMOUNT OF BID</th>
 </tr>
 </thead>
 <tbody>
-<tr>
-<td style="border:1px solid #000000;padding:8px 10px;vertical-align:top;"><strong>1. {b1_name}</strong><br><span style="font-size:11.5px;padding-left:14px;color:#222;">{b1_loc}</span></td>
-<td style="border:1px solid #000000;padding:8px 10px;text-align:right;vertical-align:top;font-weight:bold;">{b1_amt}</td>
+<tr style="font-family:'Times New Roman',Times,serif !important;">
+<td class="td-bidders" style="font-family:'Times New Roman',Times,serif !important;">
+<div class="bidder-item-name" style="font-family:'Times New Roman',Times,serif !important;">1. {b1_name}</div>
+<div class="bidder-item-loc" style="font-family:'Times New Roman',Times,serif !important;">{b1_loc}</div>
+</td>
+<td class="td-amount" style="font-family:'Times New Roman',Times,serif !important;">{b1_amt}</td>
 </tr>
-<tr>
-<td style="border:1px solid #000000;padding:8px 10px;vertical-align:top;"><strong>2. {b2_name}</strong><br><span style="font-size:11.5px;padding-left:14px;color:#222;">{b2_loc}</span></td>
-<td style="border:1px solid #000000;padding:8px 10px;text-align:right;vertical-align:top;font-weight:bold;">{b2_amt}</td>
+<tr style="font-family:'Times New Roman',Times,serif !important;">
+<td class="td-bidders" style="font-family:'Times New Roman',Times,serif !important;">
+<div class="bidder-item-name" style="font-family:'Times New Roman',Times,serif !important;">2. {b2_name}</div>
+<div class="bidder-item-loc" style="font-family:'Times New Roman',Times,serif !important;">{b2_loc}</div>
+</td>
+<td class="td-amount" style="font-family:'Times New Roman',Times,serif !important;">{b2_amt}</td>
 </tr>
-<tr>
-<td style="border:1px solid #000000;padding:8px 10px;vertical-align:top;"><strong>3. {b3_name}</strong><br><span style="font-size:11.5px;padding-left:14px;color:#222;">{b3_loc}</span></td>
-<td style="border:1px solid #000000;padding:8px 10px;text-align:right;vertical-align:top;font-weight:bold;">{b3_amt}</td>
+<tr style="font-family:'Times New Roman',Times,serif !important;">
+<td class="td-bidders" style="font-family:'Times New Roman',Times,serif !important;">
+<div class="bidder-item-name" style="font-family:'Times New Roman',Times,serif !important;">3. {b3_name}</div>
+<div class="bidder-item-loc" style="font-family:'Times New Roman',Times,serif !important;">{b3_loc}</div>
+</td>
+<td class="td-amount" style="font-family:'Times New Roman',Times,serif !important;">{b3_amt}</td>
 </tr>
 </tbody>
 </table>
-<div style="font-size:12.5px;margin-bottom:22px;text-align:justify;line-height:1.45;">
-Awarded to the lowest bidder <strong>{winner_name}</strong>, <strong>{winner_loc}</strong> same being reasonable and most advantageous to the government.
+<div class="doc-committee-section" style="font-family:'Times New Roman',Times,serif !important;">
+<div class="doc-committee-heading" style="font-family:'Times New Roman',Times,serif !important;">COMMITTEE ON AWARDS</div>
+<div class="doc-sig-center" style="font-family:'Times New Roman',Times,serif !important;">
+<div class="doc-sig-name" style="font-family:'Times New Roman',Times,serif !important;">ENGR. ALDWIN JESTER A. ANCAYAN</div>
+<div class="doc-sig-role" style="font-family:'Times New Roman',Times,serif !important;">BAC CHAIRMAN/MUN. ENGINEER</div>
 </div>
-<div style="margin-top:14px;margin-bottom:24px;">
-<div style="text-align:center;font-size:12px;font-weight:bold;margin-bottom:18px;letter-spacing:0.5px;">COMMITTEE ON AWARDS</div>
-<div style="display:flex;justify-content:space-around;text-align:center;font-size:11px;margin-bottom:16px;">
-<div>
-<div style="font-weight:bold;border-bottom:1px solid #000;padding-bottom:2px;">ENGR. ALDWIN JESTER A. ANCAYAN</div>
-<div style="font-size:10px;color:#333;">BAC CHAIRMAN/MUN. ENGINEER</div>
+<div class="doc-sig-center" style="font-family:'Times New Roman',Times,serif !important;">
+<div class="doc-sig-name" style="font-family:'Times New Roman',Times,serif !important;">CHERRYL I. ESQUILLO</div>
+<div class="doc-sig-role" style="font-family:'Times New Roman',Times,serif !important;">BAC VICE-CHAIRMAN/MUN. BUDGET OFFICER</div>
 </div>
-<div>
-<div style="font-weight:bold;border-bottom:1px solid #000;padding-bottom:2px;">CHERRYL I. ESQUILLO</div>
-<div style="font-size:10px;color:#333;">BAC VICE-CHAIRMAN/MUN. BUDGET OFFICER</div>
+<div class="doc-sig-row" style="font-family:'Times New Roman',Times,serif !important;">
+<div class="doc-sig-col" style="font-family:'Times New Roman',Times,serif !important;">
+<div class="doc-sig-name" style="font-family:'Times New Roman',Times,serif !important;">REGINO S. REYES</div>
+<div class="doc-sig-role" style="font-family:'Times New Roman',Times,serif !important;">BAC MEMBER/MUN. AGRICULTURIST</div>
 </div>
-</div>
-<div style="display:flex;justify-content:space-around;text-align:center;font-size:11px;margin-bottom:16px;">
-<div>
-<div style="font-weight:bold;border-bottom:1px solid #000;padding-bottom:2px;">REGINO S. REYES</div>
-<div style="font-size:10px;color:#333;">BAC MEMBER/MUN. AGRICULTURIST</div>
-</div>
-<div>
-<div style="font-weight:bold;border-bottom:1px solid #000;padding-bottom:2px;">GERARDO Z. RIELO JR.</div>
-<div style="font-size:10px;color:#333;">BAC MEMBER/MDRRMO</div>
+<div class="doc-sig-col" style="font-family:'Times New Roman',Times,serif !important;">
+<div class="doc-sig-name" style="font-family:'Times New Roman',Times,serif !important;">GERARDO Z. RIELO JR.</div>
+<div class="doc-sig-role" style="font-family:'Times New Roman',Times,serif !important;">BAC MEMBER/MDRRMO</div>
 </div>
 </div>
-<div style="text-align:center;font-size:11px;">
-<div style="font-weight:bold;border-bottom:1px solid #000;display:inline-block;padding-bottom:2px;">ENGR. ENP. PERCIVAL M. MALIMBAN</div>
-<div style="font-size:10px;color:#333;">BAC MEMBER/MUN. PLANNING &amp; DEV’T COORDINATOR</div>
+<div class="doc-sig-center" style="font-family:'Times New Roman',Times,serif !important;">
+<div class="doc-sig-name" style="font-family:'Times New Roman',Times,serif !important;">ENGR. ENP. PERCIVAL M. MALIMBAN</div>
+<div class="doc-sig-role" style="font-family:'Times New Roman',Times,serif !important;">BAC MEMBER/MUN. PLANNING &amp; DEV’T COORDINATOR</div>
 </div>
 </div>
-<div style="font-size:12px;font-weight:bold;color:#1e293b;border-top:1px dashed #cbd5e1;padding-top:8px;">
-{ctx.get('ac_number', '')}
+<div class="doc-award-clause" style="font-family:'Times New Roman',Times,serif !important;">
+Awarded to the lowest bidder <strong>{winner_name}</strong>, {winner_loc} same being reasonable and most advantageous to the government.
+</div>
+<div class="doc-ac-footer" style="font-family:'Times New Roman',Times,serif !important;">
+{ac_number}
 </div>
 </div>"""
+    return "".join(l.strip() for l in html.splitlines() if l.strip())
     return "".join(l.strip() for l in html.splitlines() if l.strip())
 
 def render_pdf_to_preview_png(pdf_bytes: bytes) -> bytes:
@@ -3598,10 +3717,10 @@ if generate_clicked:
                 "ac_number": ac_number_input.strip(),
             }
             
-            # Step 2: Compiling Word Template (45%)
+            # Step 2: Compiling Word Template & 1:1 Preview (Ultra-fast)
             progress_placeholder.markdown(
                 render_generation_progress_card(
-                    pct=45,
+                    pct=65,
                     status_text="Compiling Word Document (.docx)...",
                     subtitle="Injecting municipal data, winning bidder clause, and pricing tables",
                     current_step=2
@@ -3619,28 +3738,15 @@ if generate_clicked:
             st.session_state.generated_doc_bytes = doc_bytes
             st.session_state.generated_context = context
             st.session_state.generated_ac_number = ac_number_input.strip()
+            st.session_state.generated_pdf_bytes = b""
             
-            # Step 3: Fast PDF Generation
-            progress_placeholder.markdown(
-                render_generation_progress_card(
-                    pct=75,
-                    status_text="Generating Official PDF Layout...",
-                    subtitle="Compiling 1:1 vector document preview and seal",
-                    current_step=3
-                ),
-                unsafe_allow_html=True
-            )
-            
-            pdf_bytes = generate_pdf_from_docx_bytes(doc_bytes)
-            st.session_state.generated_pdf_bytes = pdf_bytes
-            
-            # Step 4: Finished & Ready
+            # Step 3: Finished & Ready
             progress_placeholder.markdown(
                 render_generation_progress_card(
                     pct=100,
                     status_text="Finished! Official Document Ready.",
-                    subtitle="Abstract of Canvass successfully compiled and sealed",
-                    current_step=4,
+                    subtitle="Abstract of Canvass successfully compiled and ready for preview & print",
+                    current_step=3,
                     finished=True
                 ),
                 unsafe_allow_html=True
@@ -3695,20 +3801,16 @@ if st.session_state.generated_doc_bytes is not None:
     doc_bytes = st.session_state.generated_doc_bytes
     doc_b64 = base64.b64encode(doc_bytes).decode("utf-8") if doc_bytes else ""
     
-    pdf_bytes = st.session_state.get("generated_pdf_bytes", b"")
-    if not pdf_bytes and doc_bytes:
-        pdf_bytes = generate_pdf_from_docx_bytes(doc_bytes)
-        st.session_state.generated_pdf_bytes = pdf_bytes
-    pdf_b64 = base64.b64encode(pdf_bytes).decode("utf-8") if pdf_bytes else ""
+    pdf_bytes = b""
+    pdf_b64 = ""
     
     ac_num_display = ctx.get("ac_number", "AC-0001B-10-26")
     
-    if pdf_b64:
-        paper_card_inner = f'<iframe src="data:application/pdf;base64,{pdf_b64}#toolbar=0&navpanes=0&scrollbar=0&view=FitH" class="preview-pdf-frame" id="preview-pdf-embed" title="Official Document Preview"></iframe>'
-    else:
-        paper_card_inner = build_html_document_fallback(ctx, logo_b64)
-        
-    print_html_content = build_html_document_fallback(ctx, logo_b64)
+    # 1:1 Crisp, official document HTML preview matching Word template exactly
+    # 100% immune to Chrome/Edge live server iframe PDF blocking
+    doc_seal_b64 = seal_b64 or logo_b64
+    paper_card_inner = build_html_document_fallback(ctx, doc_seal_b64)
+    print_html_content = paper_card_inner
     print_b64 = base64.b64encode(print_html_content.encode("utf-8")).decode("utf-8")
     
     # -------------------------------------------------------------------------
