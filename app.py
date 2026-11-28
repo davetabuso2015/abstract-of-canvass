@@ -1639,6 +1639,34 @@ css_rules = f"""
         margin-right: 14px !important;
     }}
     
+    .doc-bidders-table,
+    .doc-bidders-table *,
+    .doc-bidders-table tr,
+    .doc-bidders-table th,
+    .doc-bidders-table td,
+    .doc-paper-fallback table,
+    .doc-paper-fallback table tr,
+    .doc-paper-fallback table th,
+    .doc-paper-fallback table td,
+    [data-testid="stMarkdownContainer"] .doc-bidders-table,
+    [data-testid="stMarkdownContainer"] .doc-bidders-table tr,
+    [data-testid="stMarkdownContainer"] .doc-bidders-table th,
+    [data-testid="stMarkdownContainer"] .doc-bidders-table td,
+    [data-testid="stMarkdownContainer"] .doc-paper-fallback table,
+    [data-testid="stMarkdownContainer"] .doc-paper-fallback tr,
+    [data-testid="stMarkdownContainer"] .doc-paper-fallback th,
+    [data-testid="stMarkdownContainer"] .doc-paper-fallback td {{
+        border: none !important;
+        border-top: none !important;
+        border-bottom: none !important;
+        border-left: none !important;
+        border-right: none !important;
+        outline: none !important;
+        box-shadow: none !important;
+        border-style: none !important;
+        background: transparent !important;
+    }}
+    
     .doc-bidders-table {{
         width: 100% !important;
         border-collapse: collapse !important;
@@ -2449,34 +2477,34 @@ def build_html_document_fallback(ctx: dict, logo_b64: str) -> str:
 <div style="font-family:'Times New Roman',Times,serif !important;">Opened at the Office of the Municipal</div>
 <div style="font-family:'Times New Roman',Times,serif !important;">Mayor on {opened_date}</div>
 </div>
-<table class="doc-bidders-table" style="font-family:'Times New Roman',Times,serif !important;">
+<table class="doc-bidders-table" style="font-family:'Times New Roman',Times,serif !important; border:none !important; border-collapse:collapse !important;">
 <thead>
-<tr style="font-family:'Times New Roman',Times,serif !important;">
-<th class="th-bidders" style="font-family:'Times New Roman',Times,serif !important;">NAME OF BIDDERS</th>
-<th class="th-amount" style="font-family:'Times New Roman',Times,serif !important;">AMOUNT OF BID</th>
+<tr style="font-family:'Times New Roman',Times,serif !important; border:none !important; border-bottom:none !important;">
+<th class="th-bidders" style="font-family:'Times New Roman',Times,serif !important; border:none !important; border-bottom:none !important;">NAME OF BIDDERS</th>
+<th class="th-amount" style="font-family:'Times New Roman',Times,serif !important; border:none !important; border-bottom:none !important;">AMOUNT OF BID</th>
 </tr>
 </thead>
 <tbody>
-<tr style="font-family:'Times New Roman',Times,serif !important;">
-<td class="td-bidders" style="font-family:'Times New Roman',Times,serif !important;">
+<tr style="font-family:'Times New Roman',Times,serif !important; border:none !important; border-bottom:none !important;">
+<td class="td-bidders" style="font-family:'Times New Roman',Times,serif !important; border:none !important; border-bottom:none !important;">
 <div class="bidder-item-name" style="font-family:'Times New Roman',Times,serif !important;">1. {b1_name}</div>
 <div class="bidder-item-loc" style="font-family:'Times New Roman',Times,serif !important;">{b1_loc}</div>
 </td>
-<td class="td-amount" style="font-family:'Times New Roman',Times,serif !important;">{b1_amt}</td>
+<td class="td-amount" style="font-family:'Times New Roman',Times,serif !important; border:none !important; border-bottom:none !important;">{b1_amt}</td>
 </tr>
-<tr style="font-family:'Times New Roman',Times,serif !important;">
-<td class="td-bidders" style="font-family:'Times New Roman',Times,serif !important;">
+<tr style="font-family:'Times New Roman',Times,serif !important; border:none !important; border-bottom:none !important;">
+<td class="td-bidders" style="font-family:'Times New Roman',Times,serif !important; border:none !important; border-bottom:none !important;">
 <div class="bidder-item-name" style="font-family:'Times New Roman',Times,serif !important;">2. {b2_name}</div>
 <div class="bidder-item-loc" style="font-family:'Times New Roman',Times,serif !important;">{b2_loc}</div>
 </td>
-<td class="td-amount" style="font-family:'Times New Roman',Times,serif !important;">{b2_amt}</td>
+<td class="td-amount" style="font-family:'Times New Roman',Times,serif !important; border:none !important; border-bottom:none !important;">{b2_amt}</td>
 </tr>
-<tr style="font-family:'Times New Roman',Times,serif !important;">
-<td class="td-bidders" style="font-family:'Times New Roman',Times,serif !important;">
+<tr style="font-family:'Times New Roman',Times,serif !important; border:none !important; border-bottom:none !important;">
+<td class="td-bidders" style="font-family:'Times New Roman',Times,serif !important; border:none !important; border-bottom:none !important;">
 <div class="bidder-item-name" style="font-family:'Times New Roman',Times,serif !important;">3. {b3_name}</div>
 <div class="bidder-item-loc" style="font-family:'Times New Roman',Times,serif !important;">{b3_loc}</div>
 </td>
-<td class="td-amount" style="font-family:'Times New Roman',Times,serif !important;">{b3_amt}</td>
+<td class="td-amount" style="font-family:'Times New Roman',Times,serif !important; border:none !important; border-bottom:none !important;">{b3_amt}</td>
 </tr>
 </tbody>
 </table>
